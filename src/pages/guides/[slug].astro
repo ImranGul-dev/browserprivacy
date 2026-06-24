@@ -1,0 +1,68 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import FAQSection from '@/components/FAQSection.astro';
+import { articles } from '@/data/articles';
+import { toolBySlug } from '@/data/tools';
+import { site } from '@/data/site';
+import { articleSchema, breadcrumbSchema, faqSchema } from '@/utils/seoSchema';
+
+export function getStaticPaths() {
+  return articles.map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+const { article } = Astro.props;
+const tool = toolBySlug.get(article.relatedTool);
+const canonical = new URL(`/guides/${article.slug}/`, Astro.site ?? site.url).href;
+const schema = [
+  articleSchema(article, canonical),
+  faqSchema(article.faqs),
+  breadcrumbSchema([
+    { name: 'Home', url: `${site.url}/` },
+    { name: 'Guides', url: `${site.url}/guides/` },
+    { name: article.title, url: canonical }
+  ])
+];
+const guideKeywords = [article.title, tool?.primaryKeyword, tool?.category, 'privacy guide', 'browser-only privacy'].filter(Boolean) as string[];
+---
+<BaseLayout title={article.title} description={article.description} canonical={canonical} type="article" keywords={guideKeywords} publishedTime={article.updated} modifiedTime={article.updated}>
+  {schema.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  <section class="hero compact-hero">
+    <div class="container narrow">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/guides/">Guides</a> <span>/</span> <span>{article.title}</span></nav>
+      <p class="eyebrow">Guide</p>
+      <h1>{article.title}</h1>
+      <p class="lead">{article.intro}</p>
+      <div class="guide-meta-list" aria-label="Guide details">
+        <span>Updated {article.updated}</span>
+        {tool && <span>{tool.category}</span>}
+        <span>Browser-only workflow</span>
+      </div>
+      {tool && <a class="button primary" href={`/tools/${tool.slug}/`}>Open {tool.h1}</a>}
+    </div>
+  </section>
+  <article class="container narrow article content-main">
+    <section class="content-section callout-card content-callout">
+      <h2>Quick answer</h2>
+      <p>{article.description}</p>
+      {tool && <p>Use the related browser-only tool after reading the safety notes, then verify the output before sharing.</p>}
+    </section>
+    {article.sections.map((section) => (
+      <section class="content-section">
+        <h2>{section.heading}</h2>
+        {section.body.map((paragraph) => <p>{paragraph}</p>)}
+      </section>
+    ))}
+    <FAQSection faqs={article.faqs} />
+    {tool && (
+      <section class="content-section callout-card related-tool-callout">
+        <h2>Related tool</h2>
+        <p>{tool.hero}</p>
+        <a class="button secondary" href={`/tools/${tool.slug}/`}>Use {tool.h1}</a>
+      </section>
+    )}
+    <section class="content-section updated-note">
+      <h2>Editorial review</h2>
+      <p>Reviewed by {site.authorName}. The guide uses cautious wording for supported file types and documented browser-only operations, and it avoids guarantees around forensic sanitization, legal redaction, malware scanning, or anonymity.</p>
+      <p>Last updated: {article.updated}</p>
+    </section>
+  </article>
+</BaseLayout>

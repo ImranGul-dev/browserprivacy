@@ -1,0 +1,138 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import FAQSection from '@/components/FAQSection.astro';
+import { categories, tools } from '@/data/tools';
+import { site } from '@/data/site';
+import { faqSchema, itemListSchema, organizationSchema, webpageSchema, websiteSchema } from '@/utils/seoSchema';
+
+const description = 'Free browser-only privacy tools for EXIF metadata removal, GPS photo cleanup, PDF metadata removal, SHA-256 hashes, and URL tracking removal. No account or server-side file upload for supported files.';
+const featuredSlugs = ['remove-exif-data', 'remove-gps-from-photo', 'image-metadata-viewer', 'remove-pdf-metadata', 'remove-pdf-hidden-data', 'url-tracking-remover'];
+const featured = featuredSlugs
+  .map((slug) => tools.find((tool) => tool.slug === slug))
+  .filter((tool): tool is (typeof tools)[number] => Boolean(tool));
+const grouped = categories.map((category) => ({ category, tools: tools.filter((tool) => tool.category === category) }));
+const homeFaqs = [
+  { question: 'Are Privacy Toolbox files uploaded to a server?', answer: 'No. Supported files are selected, processed, and exported locally in your browser. The site is built without an account system or server-side file-processing API for the listed tools.' },
+  { question: 'Which privacy tool should I use before sharing a photo?', answer: 'Start with the image metadata viewer, then remove supported EXIF metadata or GPS location fields, and finally inspect the cleaned copy plus the visible image before posting.' },
+  { question: 'Can these tools remove every hidden field from every file?', answer: 'No. Privacy Toolbox removes or reports supported metadata and documented fields only. Sensitive legal, medical, compliance, or forensic files need specialist review.' },
+  { question: 'What is the best tool for cleaning tracking links?', answer: 'Use the URL Tracking Remover to remove common UTM, fbclid, gclid, msclkid, and similar parameters while preserving unknown parameters that may be needed for the link to work.' }
+];
+const schema = [
+  organizationSchema(),
+  websiteSchema(description),
+  webpageSchema('Free browser-only privacy tools', description, `${site.url}/`, 'WebPage'),
+  itemListSchema('Privacy Toolbox browser-only tools', tools.map((tool) => ({ name: tool.h1, url: `${site.url}/tools/${tool.slug}/`, description: tool.metaDescription }))),
+  faqSchema(homeFaqs)
+];
+---
+<BaseLayout
+  title="Free Online Privacy Tools - Browser-Only, No Upload"
+  description={description}
+  canonical={`${site.url}/`}
+  keywords={['privacy tools', 'online privacy tools', 'browser based privacy tools', 'EXIF metadata removal', 'PDF metadata removal', 'URL tracking remover', 'SHA256 generator']}
+>
+  {schema.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  <section class="hero home-hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Free browser-only privacy tools</p>
+        <h1>Your files stay in your browser.</h1>
+        <p class="lead">Remove supported EXIF and GPS metadata, clean common PDF metadata, calculate SHA-256 checksums, resize or convert images, and remove tracking parameters from URLs without uploading supported files to a processing server.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="/tools/">Browse tools</a>
+          <a class="button secondary" href="/privacy/">How privacy works</a>
+        </div>
+      </div>
+      <div class="hero-card promise-card">
+        <h2>No uploads. No account.</h2>
+        <p>Privacy Toolbox is a static site with local browser processing for supported inputs. Outputs are created as local downloads in your tab.</p>
+        <ul class="check-list">
+          <li>Image tools use browser image APIs and workers</li>
+          <li>PDF tools run with client-side PDF processing</li>
+          <li>URL and hash tools use native browser APIs</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="container content-section">
+    <div class="section-heading">
+      <p class="eyebrow">Top tools</p>
+      <h2>Start with a privacy task</h2>
+      <p>Every tool page explains supported inputs, limitations, privacy details, FAQs, and related guides so you know what the tool can and cannot do.</p>
+    </div>
+    <div class="card-grid three">
+      {featured.map((tool) => (
+        <a class="tool-card" href={`/tools/${tool.slug}/`}>
+          <span class="chip">{tool.category}</span>
+          <h3>{tool.h1}</h3>
+          <p>{tool.hero}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="container content-section">
+    <div class="section-heading">
+      <p class="eyebrow">High-intent privacy workflows</p>
+      <h2>Choose the right privacy utility</h2>
+      <p>These entry points match common search tasks and keep users on the shortest safe path from question to tool.</p>
+    </div>
+    <div class="feature-grid">
+      <article><h3>Remove photo metadata</h3><p>Check an image for EXIF, GPS, camera, software, date, and copyright fields, then create a cleaned copy when supported.</p><p><a href="/tools/remove-exif-data/">Remove EXIF metadata online</a> · <a href="/tools/remove-gps-from-photo/">Remove GPS from a photo</a></p></article>
+      <article><h3>Clean PDF metadata</h3><p>Clear common PDF document-info fields such as title, author, subject, creator, producer, and dates before sharing routine documents.</p><p><a href="/tools/remove-pdf-metadata/">Remove PDF metadata</a> · <a href="/tools/remove-pdf-hidden-data/">Review PDF hidden-data risks</a></p></article>
+      <article><h3>Verify files and links</h3><p>Generate a SHA-256 checksum locally or remove common tracking parameters from a URL before sharing it with someone else.</p><p><a href="/tools/sha256-file-hash/">Generate a SHA-256 hash</a> · <a href="/tools/url-tracking-remover/">Remove URL tracking parameters</a></p></article>
+    </div>
+  </section>
+
+  <section class="container content-section">
+    <div class="section-heading">
+      <p class="eyebrow">How it works</p>
+      <h2>Browser-only processing model</h2>
+      <p>Supported files are handled inside your device&apos;s browser. The website is designed without accounts, file history, or a server-side file-processing API.</p>
+    </div>
+    <div class="feature-grid">
+      <article><h3>1. Select a file</h3><p>The page uses the browser File API so you can choose a local file or paste a URL for cleaning.</p></article>
+      <article><h3>2. Process locally</h3><p>Image, PDF, and hash work runs in browser APIs and Web Workers where appropriate so the UI stays responsive.</p></article>
+      <article><h3>3. Download locally</h3><p>Outputs are generated as Blob/Object URLs in your browser and can be revoked after use.</p></article>
+    </div>
+  </section>
+
+  <section class="container content-section">
+    <div class="section-heading"><h2>Tool categories</h2></div>
+    <div class="card-grid three">
+      {grouped.map((group) => (
+        <article class="category-card">
+          <h3>{group.category}</h3>
+          <ul>
+            {group.tools.map((tool) => <li><a href={`/tools/${tool.slug}/`}>{tool.h1}</a></li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="container content-section">
+    <div class="section-heading">
+      <p class="eyebrow">Privacy workflows</p>
+      <h2>Before you share a file or link</h2>
+      <p>Ranking pages need to answer the real task behind the search. These workflows help visitors decide which browser-only tool to use and what to verify before sharing a file or link.</p>
+    </div>
+    <div class="feature-grid">
+      <article><h3>Before posting photos</h3><p>View image metadata, remove supported EXIF or GPS fields, then inspect the visible image for faces, addresses, signs, screens, and reflections.</p><p><a href="/guides/remove-photo-metadata-before-sharing/">Read the photo sharing checklist</a></p></article>
+      <article><h3>Before sending PDFs</h3><p>Remove common PDF metadata, clean basic hidden-data risks, merge, split, or remove whole pages locally. Then open the output and verify document properties, page order, comments, attachments, forms, links, and readability.</p><p><a href="/tools/remove-pdf-metadata/">Remove PDF metadata</a> · <a href="/guides/safe-pdf-workflow-before-sharing/">Read the safe PDF workflow</a></p></article>
+      <article><h3>Before sharing links</h3><p>Remove common campaign parameters from a URL, preserve unknown functional parameters, and test important links before sending them.</p><p><a href="/guides/clean-links-before-sharing/">Learn how to clean links</a></p></article>
+    </div>
+  </section>
+
+  <section class="container content-section callout-card content-callout">
+    <h2>What “browser-only” means here</h2>
+    <p>Privacy Toolbox is designed around local browser processing for supported inputs. The site can load from Netlify and Cloudflare, but selected files are not uploaded to a Privacy Toolbox processing server for the tools listed here.</p>
+    <p>This is useful for everyday privacy tasks, but it is not a promise of forensic sanitization. Each tool page explains supported formats, limitations, and verification steps so you can check the output before sharing it.</p>
+    <a class="button secondary" href="/guides/no-upload-file-tools-explained/">Understand no-upload tools</a>
+  </section>
+
+  <div class="container narrow">
+    <FAQSection faqs={homeFaqs} />
+  </div>
+</BaseLayout>

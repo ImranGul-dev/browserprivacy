@@ -1,0 +1,48 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/data/site';
+import { organizationSchema, webpageSchema } from '@/utils/seoSchema';
+const schema = [
+  organizationSchema(),
+  webpageSchema(`About ${site.name}`, `${site.name} is an independent browser-only privacy tools website for local image, PDF, hash, and URL privacy utilities.`, `${site.url}/about/`, 'AboutPage')
+];
+---
+<BaseLayout title="About Privacy Toolbox" description="About Privacy Toolbox, an independent browser-only privacy tools website for local image, PDF, hash, and URL privacy utilities." canonical={`${site.url}/about/`} keywords={['about Privacy Toolbox', 'browser-only privacy tools', 'no upload file tools']}>
+  {schema.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  <section class="hero compact-hero">
+    <div class="container narrow">
+      <p class="eyebrow">About</p>
+      <h1>About Privacy Toolbox</h1>
+      <p class="lead">Privacy Toolbox is a free, independent browser-only privacy tools website for common file and link privacy tasks.</p>
+    </div>
+  </section>
+  <article class="container narrow content-main">
+    <section class="content-section">
+      <h2>What this site does</h2>
+      <p>Privacy Toolbox provides practical utilities for removing supported photo metadata, checking image metadata, resizing and converting images, merging or splitting PDFs, calculating SHA-256 hashes, and cleaning tracking parameters from URLs.</p>
+      <p>The website is available at <a href={site.url}>{site.url}/</a>. Business type: {site.businessType}.</p>
+    </section>
+    <section class="content-section">
+      <h2>Browser-only processing model</h2>
+      <p>The site is built as a static Astro website. Supported files are processed locally in the user&apos;s browser using browser APIs and client-side workers. Hosting is provided through {site.hosting}, and DNS/CDN is handled through {site.dnsCdn}.</p>
+      <p>The tools are designed without a file upload API, account system, file history, or server-side file database.</p>
+    </section>
+    <section class="content-section">
+      <h2>Editorial and safety standards</h2>
+      <p>Tool pages and guides are reviewed by {site.authorName}. Content uses cautious wording around supported formats, documented operations, browser limits, redaction, forensic sanitization, malware scanning, and anonymity.</p>
+      <p>Pages are written to help users make safer everyday sharing decisions: inspect first, process locally where supported, download a separate copy, and verify before sending or uploading.</p>
+    </section>
+    <section class="content-section">
+      <h2>Honest privacy limits</h2>
+      <p>Privacy Toolbox avoids claims such as “forensic-grade,” “military-grade,” “100% anonymous,” or “removes all hidden data.” The tools are intended to work for supported file types and documented operations. Always verify important outputs before sharing.</p>
+    </section>
+    <section class="content-section">
+      <h2>Contact</h2>
+      <p>For feedback, bugs, corrections, or business inquiries, email <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>. Do not send private files, private URLs, metadata dumps, hashes, GPS coordinates, or file contents by email.</p>
+    </section>
+    <section class="content-section updated-note">
+      <h2>Site details</h2>
+      <p>Last updated: {site.lastUpdated}. Public business address, phone number, and company registration details should be added only after the owner provides verified details.</p>
+    </section>
+  </article>
+</BaseLayout>

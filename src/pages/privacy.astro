@@ -1,0 +1,56 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/data/site';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'PrivacyPolicy',
+  name: `${site.name} Privacy Policy`,
+  url: `${site.url}/privacy/`,
+  publisher: { '@type': 'Organization', name: site.name, url: site.url, email: site.supportEmail }
+};
+---
+<BaseLayout title="Privacy Policy" description="Privacy Policy for Privacy Toolbox browser-only tools, local file processing, hosting logs, cookies, ads, and analytics limits." canonical={`${site.url}/privacy/`}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <section class="hero compact-hero">
+    <div class="container narrow">
+      <p class="eyebrow">Privacy Policy</p>
+      <h1>Privacy Policy</h1>
+      <p class="lead">This policy explains how Privacy Toolbox handles browser-only file processing, hosting logs, cookies, advertising, and future analytics.</p>
+    </div>
+  </section>
+  <article class="container narrow content-main">
+    <section class="content-section">
+      <h2>Who operates this website</h2>
+      <p>{site.name} is an independent browser-only privacy tools website. Contact: <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.</p>
+    </section>
+    <section class="content-section">
+      <h2>Browser-only file processing</h2>
+      <p>Privacy Toolbox tools are designed so supported files are selected, processed, and downloaded locally in your browser. Supported files are not uploaded to the website server for processing. The website does not provide a backend file-processing API, user account system, file history, or file database.</p>
+    </section>
+    <section class="content-section">
+      <h2>Private tool inputs</h2>
+      <p>Tool workflows must not send file contents, filenames, file hashes, metadata values, GPS coordinates, pasted URLs, or private user inputs to analytics, advertising systems, logs, or external APIs.</p>
+    </section>
+    <section class="content-section">
+      <h2>Hosting, CDN, and basic logs</h2>
+      <p>The site is hosted on {site.hosting} and uses {site.dnsCdn} for DNS/CDN. These providers may process basic technical logs such as IP address, user agent, requested URL path, timestamp, status code, and security or performance data. These logs are separate from tool file processing and should not contain uploaded file bytes because supported files are processed locally in the browser.</p>
+    </section>
+    <section class="content-section">
+      <h2>Analytics</h2>
+      <p>Analytics are not required for the tools to work. If analytics are added later, they must be privacy-preserving and must not record filenames, file contents, hashes, metadata values, GPS coordinates, pasted URLs, page input values, or other private tool data.</p>
+    </section>
+    <section class="content-section">
+      <h2>Advertising and cookies</h2>
+      <p>Advertising is not required for browser-only processing. If AdSense or another ad network is enabled later, ads may appear only in separated content areas and providers may use cookies or similar technologies under their own policies. Ads must not be placed inside upload zones, progress areas, result cards, error messages, metadata reports, or next to download/copy buttons.</p>
+      <p>See the <a href="/cookies/">Cookie Policy</a> and <a href="/advertising/">Advertising Disclosure</a> for more detail.</p>
+    </section>
+    <section class="content-section">
+      <h2>Important privacy limits</h2>
+      <p>Metadata removal is not forensic, legal, or guaranteed anonymization. The tools remove or report supported metadata and documented fields only. Visible content in files, screenshots, faces, addresses, watermarks, embedded text, proprietary metadata, and unsupported formats may still reveal private information. Always review outputs before sharing.</p>
+    </section>
+    <section class="content-section">
+      <h2>Contact</h2>
+      <p>Questions can be sent to <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.</p>
+    </section>
+  </article>
+</BaseLayout>

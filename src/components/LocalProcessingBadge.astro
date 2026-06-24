@@ -1,0 +1,8 @@
+---
+export type Props = { label?: string };
+const label = Astro.props.label ?? 'Processed locally in your browser - your file is not uploaded.';
+---
+<div class="local-badge" aria-label="Local processing privacy note">
+  <span aria-hidden="true">shield</span>
+  <span>{label}</span>
+</div>

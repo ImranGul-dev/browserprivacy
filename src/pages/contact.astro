@@ -1,0 +1,73 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/data/site';
+const emailHref = `mailto:${site.supportEmail}?subject=Privacy%20Toolbox%20support%20request`;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: `Contact ${site.name}`,
+  url: `${site.url}/contact/`,
+  description: 'Support and contact information for Privacy Toolbox.',
+  mainEntity: {
+    '@type': 'Organization',
+    name: site.name,
+    url: site.url,
+    email: site.supportEmail,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: site.supportEmail,
+      availableLanguage: ['en']
+    }
+  }
+};
+---
+<BaseLayout title="Contact Privacy Toolbox" description="Contact Privacy Toolbox support for feedback, bug reports, content corrections, and business questions. Do not send private files or private URLs." canonical={`${site.url}/contact/`}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <section class="hero compact-hero">
+    <div class="container narrow">
+      <p class="eyebrow">Contact</p>
+      <h1>Contact Privacy Toolbox</h1>
+      <p class="lead">Send feedback, bug reports, content corrections, or business questions. Please do not email private files, private URLs, metadata dumps, GPS coordinates, hashes, or screenshots containing sensitive information.</p>
+    </div>
+  </section>
+
+  <article class="container narrow content-main">
+    <section class="contact-panel" aria-labelledby="support-email-heading">
+      <div class="contact-card-main">
+        <p class="eyebrow">Support inbox</p>
+        <h2 id="support-email-heading">Email us</h2>
+        <p class="lead contact-lead">Use this email for tool feedback, bug reports, policy questions, and partnership messages.</p>
+        <a class="contact-email" href={emailHref}>{site.supportEmail}</a>
+        <div class="contact-actions">
+          <a class="button primary" href={emailHref}>Open email app</a>
+          <a class="button secondary" href="/privacy/">Read privacy policy</a>
+        </div>
+      </div>
+      <aside class="contact-side-note" aria-label="Safe contact guidance">
+        <h3>Keep your message private</h3>
+        <ul class="check-list compact-list">
+          <li>Mention the tool name and browser.</li>
+          <li>Describe the problem without attaching the original file.</li>
+          <li>Remove private values from screenshots before sending.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="content-section">
+      <h2>What to include in a bug report</h2>
+      <p>Include the tool page, browser name and version, device type, operating system, and a non-private description of what happened. Example: “Merge PDF showed an encrypted file error in Chrome on Windows.”</p>
+      <p>Do not include sensitive filenames, file contents, metadata values, hashes, GPS coordinates, private URLs, access tokens, identity documents, or screenshots that reveal private information.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>Privacy-first support policy</h2>
+      <p>Privacy Toolbox tools are designed for local browser processing. Support messages should be limited to general troubleshooting information. We cannot safely review private files by email.</p>
+    </section>
+
+    <section class="content-section muted-panel">
+      <h2>Business details not listed</h2>
+      <p>Business address, phone number, and company registration details are not published on this website yet. They should only be added after the owner provides verified details.</p>
+    </section>
+  </article>
+</BaseLayout>

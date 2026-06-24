@@ -1,0 +1,18 @@
+---
+import { toolBySlug } from '@/data/tools';
+export type Props = { slugs: string[]; title?: string };
+const { slugs, title = 'Related tools' } = Astro.props;
+const related = slugs.map((slug) => toolBySlug.get(slug)).filter(Boolean);
+---
+<section class="content-section related-section">
+  <h2>{title}</h2>
+  <div class="card-grid three">
+    {related.map((tool) => tool && (
+      <a class="tool-card" href={`/tools/${tool.slug}/`}>
+        <span class="chip">{tool.category}</span>
+        <h3>{tool.h1}</h3>
+        <p>{tool.hero}</p>
+      </a>
+    ))}
+  </div>
+</section>

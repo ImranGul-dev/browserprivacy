@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import FAQSection from '@/components/FAQSection.astro';
+import { categories, tools } from '@/data/tools';
+import { site } from '@/data/site';
+import { breadcrumbSchema, faqSchema, itemListSchema, webpageSchema } from '@/utils/seoSchema';
+const description = 'Browse all Privacy Toolbox browser-only tools for image metadata removal, GPS cleanup, PDF page operations, PDF metadata removal, SHA-256 hashing, and URL tracking removal.';
+const grouped = categories.map((category) => ({ category, tools: tools.filter((tool) => tool.category === category) }));
+const toolsFaqs = [
+  { question: 'Which tool removes EXIF metadata?', answer: 'Use Remove EXIF Metadata from Photos for supported JPG, PNG, and WebP images. Check the cleaned copy afterward with the image metadata viewer.' },
+  { question: 'Which tool removes PDF metadata?', answer: 'Use Remove PDF Metadata Online for common document-info fields such as author, title, creator, producer, and dates. It is not a legal redaction tool.' },
+  { question: 'Do the tools work on mobile?', answer: 'Most tools work in modern mobile browsers, but very large images or PDFs can be memory-heavy. Use smaller files when browser memory is limited.' }
+];
+const schema = [
+  webpageSchema('All browser-only privacy tools', description, `${site.url}/tools/`, 'CollectionPage'),
+  itemListSchema('All Privacy Toolbox tools', tools.map((tool) => ({ name: tool.h1, url: `${site.url}/tools/${tool.slug}/`, description: tool.metaDescription }))),
+  faqSchema(toolsFaqs),
+  breadcrumbSchema([
+    { name: 'Home', url: `${site.url}/` },
+    { name: 'Tools', url: `${site.url}/tools/` }
+  ])
+];
+---
+<BaseLayout title="All Browser-Only Privacy Tools" description={description} canonical={`${site.url}/tools/`} keywords={['privacy utilities', 'privacy tools', 'metadata removal tools', 'PDF privacy tools', 'image privacy tools']}>
+  {schema.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  <section class="hero compact-hero">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span>Tools</span></nav>
+      <p class="eyebrow">All tools</p>
+      <h1>Browser-only privacy tools</h1>
+      <p class="lead">Choose a privacy utility for photos, PDFs, file hashes, or tracking links. Each page explains supported inputs, limits, verification steps, and exactly what happens locally in your browser.</p>
+    </div>
+  </section>
+  <section class="container content-section">
+    {grouped.map((group) => (
+      <div class="tool-group">
+        <h2>{group.category}</h2>
+        <div class="card-grid three">
+          {group.tools.map((tool) => (
+            <a class="tool-card" href={`/tools/${tool.slug}/`}>
+              <span class="chip">{tool.primaryKeyword}</span>
+              <h3>{tool.h1}</h3>
+              <p>{tool.hero}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+  <section class="container content-section callout-card content-callout">
+    <h2>How to pick a privacy tool</h2>
+    <p>Start with the risk: photos can expose metadata and visible clues, PDFs can expose whole pages or hidden document structure, hashes can identify identical files, and URLs can expose campaign or click-tracking parameters. Choose the smallest tool that solves the task, then verify the output before sharing.</p>
+    <ul class="content-checklist">
+      <li><strong>Photos:</strong> view metadata first, then remove supported EXIF or GPS fields if needed.</li>
+      <li><strong>PDFs:</strong> merge, split, remove pages, or clear common metadata locally, but use real redaction tools for private content inside kept pages.</li>
+      <li><strong>Hashes:</strong> compare SHA-256 values with trusted official sources, not random mirrors.</li>
+      <li><strong>URLs:</strong> remove known tracking parameters while preserving functional query parameters.</li>
+    </ul>
+  </section>
+  <div class="container narrow">
+    <FAQSection faqs={toolsFaqs} />
+  </div>
+
+</BaseLayout>

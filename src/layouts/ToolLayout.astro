@@ -1,0 +1,155 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import ToolInterface from '@/components/ToolInterface.astro';
+import FAQSection from '@/components/FAQSection.astro';
+import RelatedTools from '@/components/RelatedTools.astro';
+import PrivacyNote from '@/components/PrivacyNote.astro';
+import { site } from '@/data/site';
+import { toolContentExtras } from '@/data/toolContent';
+import { articles } from '@/data/articles';
+import { breadcrumbSchema, faqSchema, howToSchema, toolApplicationSchema, webpageSchema } from '@/utils/seoSchema';
+import type { Tool } from '@/data/tools';
+
+export type Props = { tool: Tool };
+const { tool } = Astro.props;
+const canonical = new URL(`/tools/${tool.slug}/`, Astro.site ?? site.url).href;
+const extra = toolContentExtras[tool.id];
+const relatedGuides = articles.filter((article) => article.relatedTool === tool.slug).slice(0, 5);
+const toolKeywords = [tool.primaryKeyword, tool.h1, tool.category, 'browser-only privacy tool', 'no upload privacy tool'];
+const schema = [
+  webpageSchema(tool.h1, tool.metaDescription, canonical, 'WebPage'),
+  toolApplicationSchema(tool, canonical),
+  howToSchema(`How to use ${tool.h1}`, tool.metaDescription, canonical, tool.steps),
+  faqSchema(tool.faqs),
+  breadcrumbSchema([
+    { name: 'Home', url: `${site.url}/` },
+    { name: 'Tools', url: `${site.url}/tools/` },
+    { name: tool.h1, url: canonical }
+  ])
+];
+---
+<BaseLayout title={tool.title} description={tool.metaDescription} canonical={canonical} keywords={toolKeywords} modifiedTime={site.lastUpdated}>
+  {schema.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  <section class="hero tool-hero">
+    <div class="container hero-grid">
+      <div>
+        <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/tools/">Tools</a> <span>/</span> <span>{tool.h1}</span></nav>
+        <p class="eyebrow">{tool.category}</p>
+        <h1>{tool.h1}</h1>
+        <p class="lead">{tool.hero}</p>
+        <div class="hero-points">
+          <span>No uploads</span><span>No account</span><span>Local processing</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <strong>What you get</strong>
+        <p>{tool.outputPromise}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="container tool-page-grid no-rail">
+    <div>
+      <ToolInterface tool={tool} />
+      <section class="trust-strip" aria-label="Privacy summary">
+        <span>No uploads</span><span>No account</span><span>Local processing</span><span>Delete by closing tab</span>
+      </section>
+    </div>
+  </div>
+
+  <div class="container content-layout">
+    <article class="content-main">
+      <section class="content-section intent-summary">
+        <h2>Quick answer</h2>
+        <p>{extra.intent}</p>
+        <p>This page targets the practical task behind “{tool.primaryKeyword}”: select a supported input, process it locally, download the output, and verify the result before sharing.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>What this tool does</h2>
+        <p>{tool.what}</p>
+        <p>It is designed for everyday privacy hygiene, not legal redaction, malware scanning, forensic sanitization, or guaranteed anonymity.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Best uses</h2>
+        <div class="info-card-grid">
+          {extra.bestFor.map((item) => (
+            <article class="info-card">
+              <h3>Useful for</h3>
+              <p>{item}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>How to use</h2>
+        <ol>
+          {tool.steps.map((step) => <li>{step}</li>)}
+        </ol>
+      </section>
+
+      <section class="content-section">
+        <h2>Privacy and local processing</h2>
+        <PrivacyNote text={tool.privacy} />
+        <div class="content-split">
+          <div>
+            <h3>Local workflow</h3>
+            <ul>
+              {extra.localWorkflow.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div>
+            <h3>Before sharing the output</h3>
+            <ul>
+              {extra.qualityChecks.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Supported files and limitations</h2>
+        <p><strong>Supported:</strong> {tool.acceptedFormats}</p>
+        <ul>
+          {tool.limitations.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+
+      <section class="content-section callout-card content-callout">
+        <h2>{extra.comparison.heading}</h2>
+        <p>{extra.comparison.body}</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Common mistakes to avoid</h2>
+        <ul class="warning-list">
+          {extra.avoid.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+
+      <FAQSection faqs={tool.faqs} />
+      {relatedGuides.length > 0 && (
+        <section class="content-section">
+          <h2>Related privacy guides</h2>
+          <div class="card-grid three">
+            {relatedGuides.map((guide) => (
+              <a class="tool-card" href={`/guides/${guide.slug}/`}>
+                <span class="chip">Guide</span>
+                <h3>{guide.title}</h3>
+                <p>{guide.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+      <RelatedTools slugs={tool.related} />
+      <section class="content-section updated-note">
+        <h2>Editorial accuracy</h2>
+        <p>This page avoids claims like “forensic-grade,” “military-grade,” “100% anonymous,” or “removes all hidden data.” Results are intended to be correct for supported file types and documented operations.</p>
+        <p>Reviewed by {site.authorName}. Last updated: {site.lastUpdated}</p>
+      </section>
+    </article>
+  </div>
+</BaseLayout>

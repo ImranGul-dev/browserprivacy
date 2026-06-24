@@ -1,0 +1,39 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/data/site';
+---
+<BaseLayout title="Terms of Use" description="Terms of use for Privacy Toolbox browser-only privacy tools, local processing, and educational content." canonical={`${site.url}/terms/`}>
+  <section class="hero compact-hero">
+    <div class="container narrow">
+      <p class="eyebrow">Terms</p>
+      <h1>Terms of Use</h1>
+      <p class="lead">Use Privacy Toolbox only for files and links you are allowed to process.</p>
+    </div>
+  </section>
+  <article class="container narrow content-main">
+    <section class="content-section">
+      <h2>Operator</h2>
+      <p>{site.name} is an independent browser-only privacy tools website. Contact: <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.</p>
+    </section>
+    <section class="content-section">
+      <h2>Allowed use</h2>
+      <p>You may use the tools for files, links, and content that you own or have permission to process. Do not use Privacy Toolbox to violate laws, contracts, privacy rights, intellectual property rights, or platform rules.</p>
+    </section>
+    <section class="content-section">
+      <h2>No professional advice</h2>
+      <p>Privacy Toolbox provides utility tools and educational content. It is not legal, security, forensic, compliance, or professional advice.</p>
+    </section>
+    <section class="content-section">
+      <h2>Supported operations only</h2>
+      <p>Tools are intended to work for supported formats and documented operations. Unsupported, corrupted, encrypted, very large, unusual, or browser-incompatible files may fail or produce incomplete results.</p>
+    </section>
+    <section class="content-section">
+      <h2>Your responsibility</h2>
+      <p>Review outputs before sharing. Do not rely on these tools for legal redaction, malware scanning, forensic sanitization, guaranteed anonymity, or guaranteed privacy.</p>
+    </section>
+    <section class="content-section">
+      <h2>Availability</h2>
+      <p>The website may change, pause, or remove tools, articles, or features at any time. The tools are provided without warranties to the fullest extent allowed by applicable law.</p>
+    </section>
+  </article>
+</BaseLayout>

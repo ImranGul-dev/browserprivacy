@@ -1,0 +1,10 @@
+---
+import ToolLayout from '@/layouts/ToolLayout.astro';
+import { tools } from '@/data/tools';
+
+export function getStaticPaths() {
+  return tools.map((tool) => ({ params: { slug: tool.slug }, props: { tool } }));
+}
+const { tool } = Astro.props;
+---
+<ToolLayout tool={tool} />

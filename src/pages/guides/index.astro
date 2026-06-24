@@ -1,0 +1,77 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { articles } from '@/data/articles';
+import { toolBySlug } from '@/data/tools';
+import { site } from '@/data/site';
+import { breadcrumbSchema, itemListSchema, webpageSchema } from '@/utils/seoSchema';
+const description = 'Practical browser-only privacy guides for photo metadata, GPS location, PDF metadata, SHA-256 checksums, image formats, and tracking links.';
+const priorityGuideSlugs = [
+  'remove-gps-from-iphone-photos',
+  'remove-gps-from-android-photos',
+  'how-to-check-photo-gps',
+  'remove-exif-metadata-before-uploading',
+  'image-metadata-viewer-before-sharing',
+  'remove-pdf-metadata-before-sharing',
+  'is-it-safe-to-use-online-pdf-tools',
+  'merge-pdf-files-without-uploading',
+  'split-pdf-files-without-uploading',
+  'remove-pdf-pages-before-sharing',
+  'remove-tracking-from-amazon-links',
+  'browser-based-privacy-tools',
+  'verify-download-sha256-checksum'
+];
+const sortedArticles = [...articles].sort((a, b) => {
+  const aIndex = priorityGuideSlugs.indexOf(a.slug);
+  const bIndex = priorityGuideSlugs.indexOf(b.slug);
+  if (aIndex === -1 && bIndex === -1) return a.title.localeCompare(b.title);
+  if (aIndex === -1) return 1;
+  if (bIndex === -1) return -1;
+  return aIndex - bIndex;
+});
+const schema = [
+  webpageSchema('Privacy and file-handling guides', description, `${site.url}/guides/`, 'CollectionPage'),
+  itemListSchema('Privacy Toolbox guides', sortedArticles.map((article) => ({ name: article.title, url: `${site.url}/guides/${article.slug}/`, description: article.description }))),
+  breadcrumbSchema([
+    { name: 'Home', url: `${site.url}/` },
+    { name: 'Guides', url: `${site.url}/guides/` }
+  ])
+];
+---
+<BaseLayout title="Privacy Guides for Metadata, PDFs, Hashes and Links" description={description} canonical={`${site.url}/guides/`} keywords={['privacy guides', 'metadata removal guide', 'PDF privacy guide', 'photo GPS privacy', 'tracking link guide']}>
+  {schema.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  <section class="hero compact-hero">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span>Guides</span></nav>
+      <p class="eyebrow">Guides</p>
+      <h1>Privacy and file-handling guides</h1>
+      <p class="lead">Learn what the tools can and cannot do before sharing photos, PDFs, checksums, and links. Start with practical long-tail guides that answer one clear privacy task at a time.</p>
+    </div>
+  </section>
+  <section class="container content-section">
+    <div class="card-grid three">
+      {sortedArticles.map((article) => {
+        const tool = toolBySlug.get(article.relatedTool);
+        return (
+          <a class="tool-card" href={`/guides/${article.slug}/`}>
+            <span class="chip">{tool?.category ?? 'Guide'}</span>
+            <h2>{article.title}</h2>
+            <p>{article.description}</p>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+  <section class="container content-section callout-card content-callout">
+    <h2>Start with these ranking-focused guides</h2>
+    <p>For photo privacy, begin with iPhone GPS, Android GPS, photo location checks, and EXIF cleanup before uploads. For document privacy, focus on whether online PDF tools are safe, then use local merge, split, metadata cleanup, and page-removal workflows. For link privacy, start with Amazon tracking links and general URL tracking cleanup.</p>
+    <ul class="content-checklist">
+      <li><a href="/guides/remove-gps-from-iphone-photos/">Remove GPS from iPhone photos</a></li>
+      <li><a href="/guides/remove-gps-from-android-photos/">Remove GPS from Android photos</a></li>
+      <li><a href="/guides/remove-exif-metadata-before-uploading/">Remove EXIF before uploading online</a></li>
+      <li><a href="/guides/remove-pdf-metadata-before-sharing/">Remove PDF metadata before sharing</a></li>
+      <li><a href="/guides/is-it-safe-to-use-online-pdf-tools/">Is it safe to use online PDF tools?</a></li>
+      <li><a href="/guides/remove-tracking-from-amazon-links/">Remove tracking from Amazon links</a></li>
+    </ul>
+  </section>
+
+</BaseLayout>

@@ -1,0 +1,39 @@
+---
+import { site } from '@/data/site';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <a class="brand footer-brand" href="/">
+        <span class="brand-mark" aria-hidden="true">盾</span>
+        <span>{site.name}</span>
+      </a>
+      <p>Free browser-only privacy tools for photos, PDFs, file hashes, and tracking links. Supported files are processed locally in your browser without accounts or server-side file uploads.</p>
+      <p class="footer-owner">Support: <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a></p>
+    </div>
+    <nav aria-label="Footer tools">
+      <h2>Tools</h2>
+      <a href="/tools/remove-exif-data/">Remove EXIF Metadata</a>
+      <a href="/tools/remove-gps-from-photo/">Remove GPS from Photo</a>
+      <a href="/tools/merge-pdf/">Merge PDF</a>
+      <a href="/tools/remove-pdf-metadata/">Remove PDF Metadata</a>
+      <a href="/tools/remove-pdf-hidden-data/">Remove PDF Hidden Data</a>
+      <a href="/tools/sha256-file-hash/">SHA-256 Hash</a>
+      <a href="/tools/url-tracking-remover/">URL Tracking Remover</a>
+    </nav>
+    <nav aria-label="Footer policies">
+      <h2>Site</h2>
+      <a href="/about/">About</a>
+      <a href="/guides/">Guides</a>
+      <a href="/privacy/">Privacy Policy</a>
+      <a href="/terms/">Terms</a>
+      <a href="/cookies/">Cookie Policy</a>
+      <a href="/advertising/">Advertising Disclosure</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; {year} {site.name}. Browser-only tools for supported files and documented operations.</p>
+  </div>
+</footer>

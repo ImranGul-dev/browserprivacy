@@ -1,0 +1,34 @@
+---
+import { categories, tools } from '@/data/tools';
+const grouped = categories.map((category) => ({
+  category,
+  tools: tools.filter((tool) => tool.category === category)
+}));
+---
+<header class="site-header">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Privacy Toolbox home">
+      <span class="brand-mark" aria-hidden="true">盾</span>
+      <span>Privacy Toolbox</span>
+    </a>
+    <nav class="nav" aria-label="Primary navigation">
+      <a href="/tools/">Tools</a>
+      <a href="/guides/">Guides</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <details class="tools-menu">
+      <summary>Browse tools</summary>
+      <div class="tools-menu-panel">
+        {grouped.map((group) => (
+          <section>
+            <p class="tools-menu-heading">{group.category}</p>
+            {group.tools.map((tool) => <a href={`/tools/${tool.slug}/`}>{tool.h1}</a>)}
+          </section>
+        ))}
+      </div>
+    </details>
+  </div>
+</header>

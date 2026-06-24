@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/data/site';
+---
+<BaseLayout title="Advertising Disclosure" description="Advertising disclosure for Privacy Toolbox, including safe ad placement and browser-only privacy limits." canonical={`${site.url}/advertising/`}>
+  <section class="hero compact-hero">
+    <div class="container narrow">
+      <p class="eyebrow">Advertising</p>
+      <h1>Advertising Disclosure</h1>
+      <p class="lead">Privacy Toolbox may use advertising in the future to support free browser-only tools, but ads must stay separate from file-processing controls.</p>
+    </div>
+  </section>
+  <article class="container narrow content-main">
+    <section class="content-section">
+      <h2>Current status</h2>
+      <p>No live AdSense publisher code is included in this source. Visible ad placeholder boxes are disabled for now so users are not distracted while using the tools.</p>
+    </section>
+    <section class="content-section">
+      <h2>Safe placement rule</h2>
+      <p>Ads may appear in clearly separated content areas only after the site is ready for monetization. Ads must not be placed inside upload zones, file selection controls, progress indicators, result cards, error messages, metadata reports, or next to download/copy buttons.</p>
+    </section>
+    <section class="content-section">
+      <h2>Privacy rule</h2>
+      <p>Advertising integrations must not receive filenames, file contents, hashes, metadata values, GPS coordinates, pasted URLs, or private tool inputs.</p>
+    </section>
+    <section class="content-section">
+      <h2>Contact</h2>
+      <p>Advertising and policy questions can be sent to <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.</p>
+    </section>
+  </article>
+</BaseLayout>

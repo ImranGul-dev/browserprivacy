@@ -1,0 +1,7 @@
+---
+export type Props = { text?: string };
+const text = Astro.props.text ?? 'Your selected file is processed locally in your browser. The site does not upload files, store file history, or create server-side downloads.';
+---
+<aside class="privacy-note">
+  <strong>No-upload privacy note:</strong> {text}
+</aside>

@@ -1,0 +1,10 @@
+---
+export type Props = { cta: string; accept?: string; multiple?: boolean; note: string };
+const { cta, accept, multiple = false, note } = Astro.props;
+---
+<label class="upload-box">
+  <input type="file" accept={accept} multiple={multiple} />
+  <span class="upload-icon" aria-hidden="true">↥</span>
+  <strong>{cta}</strong>
+  <small>{note}</small>
+</label>

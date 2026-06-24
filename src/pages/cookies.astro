@@ -1,0 +1,35 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/data/site';
+---
+<BaseLayout title="Cookie Policy" description="Cookie Policy for Privacy Toolbox browser-only tools and future advertising or analytics integrations." canonical={`${site.url}/cookies/`}>
+  <section class="hero compact-hero">
+    <div class="container narrow">
+      <p class="eyebrow">Cookie Policy</p>
+      <h1>Cookie Policy</h1>
+      <p class="lead">The core browser-only tools do not need cookies to process supported files locally. Future ads or analytics may use cookies where allowed.</p>
+    </div>
+  </section>
+  <article class="container narrow content-main">
+    <section class="content-section">
+      <h2>Tool functionality</h2>
+      <p>The file-processing tools are designed to run without accounts, uploads, or cookies for file handling. Supported files are processed locally in your browser.</p>
+    </section>
+    <section class="content-section">
+      <h2>Current cookie use</h2>
+      <p>The current browser-only tool experience does not require a login cookie or file-processing cookie. Hosting and CDN providers may still use technical logs or security mechanisms at the network level.</p>
+    </section>
+    <section class="content-section">
+      <h2>Advertising and analytics</h2>
+      <p>No real AdSense publisher code is included in this source. If AdSense or another ad network is added later, this policy should be updated with provider details, cookie purposes, consent requirements, and opt-out information for the jurisdictions you serve.</p>
+    </section>
+    <section class="content-section">
+      <h2>Preferences</h2>
+      <p>If cookie consent or privacy preference controls are added later, link them here and explain how users can change their choices.</p>
+    </section>
+    <section class="content-section">
+      <h2>Contact</h2>
+      <p>Questions can be sent to <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.</p>
+    </section>
+  </article>
+</BaseLayout>

@@ -1,0 +1,15 @@
+---
+export type Props = { faqs: { question: string; answer: string }[] };
+const { faqs } = Astro.props;
+---
+<section class="content-section faq-section" id="faq">
+  <h2>FAQ</h2>
+  <div class="faq-list">
+    {faqs.map((item) => (
+      <details>
+        <summary>{item.question}</summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </div>
+</section>
