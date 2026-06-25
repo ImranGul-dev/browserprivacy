@@ -22,7 +22,7 @@
     "vitest": "^3.2.6"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.12.0"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.62.0"
