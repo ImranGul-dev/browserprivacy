@@ -1,6 +1,9 @@
-[build]
+﻿[build]
   command = "npm run build"
   publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22.12.0"
 
 [[headers]]
   for = "/*"
@@ -43,7 +46,6 @@
   [headers.values]
     Cache-Control = "public, max-age=86400, must-revalidate"
 
-# Canonical slash redirects for primary collection pages.
 [[redirects]]
   from = "/tools"
   to = "/tools/"
@@ -56,7 +58,6 @@
   status = 301
   force = true
 
-# Legacy SaaS/cloud routes from earlier deployments. Keep them from contradicting the browser-only site.
 [[redirects]]
   from = "/security"
   to = "/privacy/"
@@ -102,7 +103,6 @@
   to = "/guides/:splat"
   status = 301
 
-# Legacy indexed tool URLs discovered in search results. Send users and crawlers to the closest current, static, browser-only equivalent.
 [[redirects]]
   from = "/tools/remove-pdf-metadata/how-it-works"
   to = "/tools/remove-pdf-metadata/"
@@ -162,4 +162,3 @@
   from = "/tools/remove-video-metadata/how-it-works"
   to = "/tools/"
   status = 301
-
