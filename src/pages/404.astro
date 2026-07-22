@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolGrid from '../components/ToolGrid.astro';
+import { tools } from '../data/tools';
+---
+<BaseLayout
+  title="Page Not Found"
+  description="The requested page could not be found. Browse the current Privacy Toolbox tools and guides."
+  robots="noindex, follow"
+>
+  <section class="page-hero">
+    <span class="eyebrow">404</span>
+    <h1>Page not found</h1>
+    <p class="lede">This URL may be outdated or mistyped. Use the current tool directory, guide library, or homepage to continue.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/tools/">Browse all tools</a>
+      <a class="btn" href="/guides/">Browse guides</a>
+      <a class="btn" href="/">Go home</a>
+    </div>
+  </section>
+  <section class="section">
+    <ToolGrid tools={tools} limit={6} />
+  </section>
+</BaseLayout>

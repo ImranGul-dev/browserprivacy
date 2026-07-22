@@ -1,0 +1,25 @@
+---
+const nav = [
+  { href: '/tools/', label: 'Tools' },
+  { href: '/ai-privacy-tools/', label: 'AI Privacy' },
+  { href: '/developer-privacy-tools/', label: 'Developers' },
+  { href: '/file-privacy-tools/', label: 'File Privacy' },
+  { href: '/guides/', label: 'Guides' },
+  { href: '/methodology/', label: 'Methodology' }
+];
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) => href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+---
+<header class="site-header">
+  <div class="nav-shell">
+    <a href="/" class="brand" aria-label="Privacy Toolbox home">
+      <span class="brand-mark" aria-hidden="true">PT</span>
+      <span class="brand-copy"><strong>Privacy Toolbox</strong><small>Browser-only privacy tools</small></span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu">Menu</button>
+    <nav id="site-menu" class="site-nav" aria-label="Main navigation">
+      {nav.map((item) => <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>)}
+    </nav>
+    <a class="nav-cta" href="/remove-pii-before-chatgpt/">Clean text</a>
+  </div>
+</header>

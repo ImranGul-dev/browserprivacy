@@ -1,0 +1,13 @@
+---
+import type { ToolPage } from '../data/tools';
+const { tool } = Astro.props as { tool: ToolPage };
+---
+<a class="tool-card" href={`/${tool.slug}/`}>
+  <div class="card-icon" aria-hidden="true">{tool.name.split(' ').slice(0,2).map((word) => word[0]).join('')}</div>
+  <h3>{tool.name}</h3>
+  <p>{tool.shortDescription}</p>
+  <div class="tag-row">
+    <span class="tag">{tool.category}</span>
+    <span class="tag">Browser-only</span>
+  </div>
+</a>

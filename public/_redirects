@@ -1,0 +1,68 @@
+# Retired AI/privacy keyword variants consolidated into canonical tools
+/ai-prompt-privacy-cleaner/ /remove-pii-before-chatgpt/ 301!
+/personal-data-redactor/ /remove-pii-before-chatgpt/ 301!
+/client-email-anonymizer/ /remove-pii-before-chatgpt/ 301!
+/support-ticket-cleaner/ /remove-pii-before-chatgpt/ 301!
+/medical-note-redactor/ /remove-pii-before-chatgpt/ 301!
+/legal-text-redactor/ /remove-pii-before-chatgpt/ 301!
+/business-data-redactor/ /remove-pii-before-chatgpt/ 301!
+/slack-message-redactor/ /remove-pii-before-chatgpt/ 301!
+/resume-anonymizer/ /remove-pii-before-chatgpt/ 301!
+/phone-number-redactor/ /remove-pii-before-chatgpt/ 301!
+/email-address-redactor/ /remove-pii-before-chatgpt/ 301!
+/redact-api-keys-from-logs/ /sanitize-logs-before-chatgpt/ 301!
+/stack-trace-sanitizer/ /sanitize-logs-before-chatgpt/ 301!
+/env-secret-scanner/ /sanitize-logs-before-chatgpt/ 301!
+/github-issue-privacy-cleaner/ /sanitize-logs-before-chatgpt/ 301!
+/jira-ticket-redactor/ /sanitize-logs-before-chatgpt/ 301!
+/json-key-masker/ /json-pii-redactor/ 301!
+/csv-pii-scanner/ /csv-anonymizer/ 301!
+/remove-emails-from-spreadsheet/ /csv-anonymizer/ 301!
+/image-text-privacy-checker/ /screenshot-redactor/ 301!
+/invoice-redactor/ /screenshot-redactor/ 301!
+/receipt-redactor/ /screenshot-redactor/ 301!
+
+# Retired guide variants
+/guides/remove-personal-data-before-using-ai-tools/ /guides/how-to-anonymize-text-before-using-ai/ 301!
+/guides/privacy-checklist-before-sharing-with-ai/ /guides/what-not-to-paste-into-chatgpt/ 301!
+/guides/browser-only-tools-vs-online-upload-tools/ /compare/ 301!
+/guides/combine-pdfs-without-uploading/ /guides/merge-pdf-files-without-uploading/ 301!
+/guides/remove-blank-pages-from-pdf/ /guides/remove-pdf-pages-before-sharing/ 301!
+/guides/split-pdf-files-without-uploading/ /guides/remove-pdf-pages-before-sharing/ 301!
+/guides/remove-gps-from-iphone-photos/ /guides/remove-exif-metadata-before-uploading/ 301!
+/guides/remove-gps-from-android-photos/ /guides/remove-exif-metadata-before-uploading/ 301!
+/guides/is-it-safe-to-use-online-pdf-tools/ /guides/no-upload-file-tools-explained/ 301!
+/guides/remove-tracking-from-amazon-links/ /guides/what-are-utm-parameters/ 301!
+
+# Previous blog URLs
+/blog /guides/ 301!
+/blog/ /guides/ 301!
+/blog/pdf-redaction-mistakes /guides/pdf-redaction-mistakes/ 301!
+/blog/pdf-redaction-mistakes/ /guides/pdf-redaction-mistakes/ 301!
+
+# Previous file-tool routes mapped to the closest live replacement
+/tools/remove-pdf-hidden-data/ /guides/remove-pdf-metadata-before-sharing/ 301!
+/tools/remove-pdf-metadata/ /guides/remove-pdf-metadata-before-sharing/ 301!
+/tools/remove-pdf-metadata/how-it-works /guides/remove-pdf-metadata-before-sharing/ 301!
+/tools/remove-pdf-metadata/how-it-works/ /guides/remove-pdf-metadata-before-sharing/ 301!
+/tools/remove-pdf-pages/ /guides/remove-pdf-pages-before-sharing/ 301!
+/tools/remove-zip-privacy-risks /guides/zip-file-privacy-checklist/ 301!
+/tools/remove-zip-privacy-risks/ /guides/zip-file-privacy-checklist/ 301!
+/tools/remove-audio-metadata/how-it-works /guides/no-upload-file-tools-explained/ 301!
+/tools/remove-audio-metadata/how-it-works/ /guides/no-upload-file-tools-explained/ 301!
+/tools/remove-exif-metadata/ /remove-exif-metadata/ 301!
+/tools/view-image-metadata/ /view-image-metadata/ 301!
+/tools/sha256-checksum/ /sha256-checksum/ 301!
+/remove-gps-from-photo/ /remove-exif-metadata/ 301!
+/url-tracking-remover/ /url-privacy-cleaner/ 301!
+/merge-pdf/ /guides/merge-pdf-files-without-uploading/ 301!
+/split-pdf/ /guides/remove-pdf-pages-before-sharing/ 301!
+/remove-pdf-hidden-data/ /guides/remove-pdf-metadata-before-sharing/ 301!
+/remove-pdf-metadata/ /guides/remove-pdf-metadata-before-sharing/ 301!
+/remove-pdf-pages/ /guides/remove-pdf-pages-before-sharing/ 301!
+/remove-audio-metadata/ /guides/no-upload-file-tools-explained/ 301!
+/remove-zip-privacy-risks/ /guides/zip-file-privacy-checklist/ 301!
+/tools/url-tracking-remover/ /url-privacy-cleaner/ 301!
+/tools/remove-gps-from-photo/ /remove-exif-metadata/ 301!
+/tools/merge-pdf/ /guides/merge-pdf-files-without-uploading/ 301!
+/tools/split-pdf/ /guides/remove-pdf-pages-before-sharing/ 301!

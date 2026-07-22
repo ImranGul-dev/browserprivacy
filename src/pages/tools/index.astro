@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolGrid from '../../components/ToolGrid.astro';
+import { tools } from '../../data/tools';
+import { breadcrumb, itemListSchema } from '../../data/schema';
+
+const categories = [...new Set(tools.map((tool) => tool.category))];
+const schema = [
+  breadcrumb([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools/' }]),
+  itemListSchema('Privacy Toolbox tools', tools.map((tool) => ({ name: tool.name, url: `/${tool.slug}/` })))
+];
+---
+<BaseLayout
+  title="Free Browser-Only Privacy Tools"
+  description="Use local tools for AI text redaction, log sanitization, JSON and CSV anonymization, screenshot redaction, image metadata, links, JWTs, and SHA-256 checksums."
+  modifiedTime="2026-07-23"
+  schema={schema}
+>
+  <section class="page-hero">
+    <div class="breadcrumbs"><a href="/">Home</a> / Tools</div>
+    <span class="eyebrow">Focused local utilities</span>
+    <h1>Privacy tools that run in your browser</h1>
+    <p class="lede">Choose the tool that matches the content you are about to share. Each page explains the local workflow, representative tests, known limits, and manual checks.</p>
+  </section>
+
+  <nav class="category-jump" aria-label="Tool categories">
+    {categories.map((category) => <a href={`#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{category}</a>)}
+  </nav>
+
+  {categories.map((category) => (
+    <section class="section" id={category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}>
+      <div class="section-heading">
+        <div><span class="eyebrow">{category}</span><h2>{category} tools</h2></div>
+        <p>Process locally for the normal workflow, then review context and the exact final output before sharing.</p>
+      </div>
+      <ToolGrid tools={tools.filter((tool) => tool.category === category)} />
+    </section>
+  ))}
+</BaseLayout>

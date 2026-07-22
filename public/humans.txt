@@ -1,0 +1,5 @@
+Privacy Toolbox
+Maintainer: Imran Gul
+Contact: support@privacy-toolbox.com
+Purpose: Browser-only privacy and file-safety utilities.
+Last major review: 2026-07-23

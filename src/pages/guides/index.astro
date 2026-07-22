@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { guides } from '../../data/guides';
+import { breadcrumb, itemListSchema } from '../../data/schema';
+
+const categories = [...new Set(guides.map((guide) => guide.category))];
+const schema = [
+  breadcrumb([{ name: 'Home', url: '/' }, { name: 'Guides', url: '/guides/' }]),
+  itemListSchema('Privacy Toolbox guides', guides.map((guide) => ({ name: guide.title, url: `/guides/${guide.slug}/` })))
+];
+---
+<BaseLayout title="Privacy Guides for AI, Files, Images, PDFs, and Data" description="Practical privacy guides for cleaning AI prompts, logs, JSON, CSV files, image metadata, screenshots, PDFs, ZIP files, links, and downloads." schema={schema}>
+  <section class="page-hero">
+    <div class="breadcrumbs"><a href="/">Home</a> / Guides</div>
+    <span class="eyebrow">Practical privacy library</span>
+    <h1>Privacy guides for safer digital sharing</h1>
+    <p class="lede">Learn how to reduce unnecessary exposure before sharing content with AI tools, support teams, clients, public platforms, or file recipients.</p>
+  </section>
+
+  <nav class="category-jump" aria-label="Guide categories">
+    {categories.map((category) => <a href={`#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{category}</a>)}
+  </nav>
+
+  {categories.map((category) => {
+    const categoryGuides = guides.filter((guide) => guide.category === category);
+    return (
+      <section class="section guide-category" id={category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}>
+        <div class="section-heading">
+          <div><span class="eyebrow">{category}</span><h2>{category} guides</h2></div>
+          <p>{categoryGuides.length} focused guide{categoryGuides.length === 1 ? '' : 's'} with practical checks, limitations, and related tools.</p>
+        </div>
+        <div class="grid">
+          {categoryGuides.map((guide) => (
+            <a class="guide-card" href={`/guides/${guide.slug}/`}>
+              <span class="tag">{guide.primaryKeyword}</span>
+              <h3>{guide.title}</h3>
+              <p>{guide.metaDescription}</p>
+              <div class="guide-meta"><span>{guide.readingTime}</span><span>Updated {guide.updated}</span></div>
+            </a>
+          ))}
+        </div>
+      </section>
+    );
+  })}
+</BaseLayout>

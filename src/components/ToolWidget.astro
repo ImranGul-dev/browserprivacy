@@ -1,0 +1,106 @@
+---
+import type { ToolPage } from '../data/tools';
+const { tool } = Astro.props as { tool: ToolPage };
+const isImage = tool.mode === 'image-redactor';
+const isJwt = tool.mode === 'jwt-checker';
+const isUrl = tool.mode === 'url-cleaner';
+---
+<section class="tool-panel" data-tool data-mode={tool.mode} data-tool-name={tool.name}>
+  <div class="panel-head">
+    <div>
+      <h2>{tool.name}</h2>
+      <p>{tool.interfaceHint}</p>
+    </div>
+    <div class="tool-privacy-note">Local processing: your input is handled by JavaScript in this browser.</div>
+  </div>
+
+  {isImage ? (
+    <div class="image-tool" data-image-tool>
+      <div class="field">
+        <label for="image-file">Choose an image</label>
+        <input id="image-file" type="file" accept="image/png,image/jpeg,image/webp" />
+      </div>
+      <div class="image-workspace">
+        <div class="canvas-wrap">
+          <canvas id="redaction-canvas" width="900" height="520" aria-label="Image redaction canvas"></canvas>
+        </div>
+        <div class="content-card">
+          <h3>Review the full image</h3>
+          <div class="checklist">
+            <label><input type="checkbox" /> Names, emails, and phone numbers</label>
+            <label><input type="checkbox" /> Account, invoice, order, and case IDs</label>
+            <label><input type="checkbox" /> Browser tabs, URLs, menus, and notifications</label>
+            <label><input type="checkbox" /> Payment, location, profile, and access details</label>
+          </div>
+          <div class="tool-controls">
+            <select id="redaction-style" aria-label="Redaction style">
+              <option value="solid">Solid cover</option>
+              <option value="blur">Blur area</option>
+            </select>
+            <button class="btn" type="button" data-clear-boxes>Clear boxes</button>
+            <button class="btn btn-primary" type="button" data-download-image>{tool.primaryButton}</button>
+          </div>
+          <p class="muted">Drag over the image to create redaction boxes. Use a solid cover when text must be unreadable.</p>
+        </div>
+      </div>
+    </div>
+  ) : isJwt ? (
+    <div class="tool-grid">
+      <div class="field">
+        <label for="tool-input">JWT token</label>
+        <textarea id="tool-input" placeholder={tool.emptyState}></textarea>
+        <div class="tool-controls">
+          <button class="btn btn-primary" type="button" data-run-tool>{tool.primaryButton}</button>
+          <button class="btn" type="button" data-clear-tool>Clear locally</button>
+        </div>
+      </div>
+      <div>
+        <label>Decoded header and payload</label>
+        <div class="tool-output" data-output aria-live="polite">Decoded JWT details will appear here.</div>
+        <div class="stats" data-stats></div>
+        <div class="alert">This tool does not verify the signature, expiry, revocation status, or trustworthiness of the token.</div>
+      </div>
+    </div>
+  ) : isUrl ? (
+    <div class="tool-grid">
+      <div class="field">
+        <label for="tool-input">URLs or text containing URLs</label>
+        <textarea id="tool-input" placeholder={tool.emptyState}></textarea>
+        <div class="tool-controls">
+          <button class="btn btn-primary" type="button" data-run-tool>{tool.primaryButton}</button>
+          <button class="btn" type="button" data-copy-output>Copy cleaned links</button>
+          <button class="btn" type="button" data-clear-tool>Clear locally</button>
+        </div>
+      </div>
+      <div>
+        <label>Cleaned output</label>
+        <div class="tool-output" data-output aria-live="polite">Cleaned URLs will appear here.</div>
+        <div class="stats" data-stats></div>
+        <div class="alert">Test the cleaned link and review any remaining document, account, invitation, or access identifiers.</div>
+      </div>
+    </div>
+  ) : (
+    <div class="tool-grid">
+      <div class="field">
+        <label for="tool-input">Input</label>
+        <textarea id="tool-input" placeholder={tool.emptyState}></textarea>
+        <div class="tool-controls">
+          <input type="file" data-file-input accept=".txt,.csv,.json,.log,.env,text/plain,application/json,text/csv" aria-label="Choose a local text file" />
+        </div>
+        <div class="tool-controls">
+          <button class="btn btn-primary" type="button" data-run-tool>{tool.primaryButton}</button>
+          <button class="btn" type="button" data-copy-output>Copy cleaned text</button>
+          <button class="btn" type="button" data-download-output>Download cleaned file</button>
+          <button class="btn" type="button" data-clear-tool>Clear locally</button>
+        </div>
+      </div>
+      <div>
+        <label>Cleaned output</label>
+        <div class="tool-output" data-output aria-live="polite">Results will appear here after scanning.</div>
+        <div class="stats" data-stats></div>
+        <div class="alert">Automated detection is a first pass. Review context-specific identifiers before sharing the result.</div>
+      </div>
+    </div>
+  )}
+</section>
+<script src="/scripts/toolbox.js" defer></script>

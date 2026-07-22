@@ -1,0 +1,96 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  schema?: Record<string, unknown>[];
+  type?: 'website' | 'article';
+  robots?: string;
+  image?: string;
+  imageAlt?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  schema = [],
+  type = 'website',
+  robots = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+  image = '/assets/privacy-toolbox-og.png',
+  imageAlt = 'Privacy Toolbox browser-only privacy tools',
+  publishedTime,
+  modifiedTime,
+  author = 'Imran Gul'
+} = Astro.props;
+
+const siteUrl = 'https://privacy-toolbox.com';
+const rawPath = Astro.url.pathname;
+const hasExtension = /\/[^/]+\.[a-z0-9]+$/i.test(rawPath);
+const normalizedPath = rawPath === '/' || rawPath.endsWith('/') || hasExtension ? rawPath : `${rawPath}/`;
+const pageUrl = canonical ?? new URL(normalizedPath, siteUrl).toString();
+const imageUrl = new URL(image, siteUrl).toString();
+const fullTitle = title.includes('Privacy Toolbox') ? title : `${title} | Privacy Toolbox`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={author} />
+    <meta name="robots" content={robots} />
+    <meta name="theme-color" content="#0f2f3f" />
+    <meta name="color-scheme" content="light" />
+
+    <link rel="canonical" href={pageUrl} />
+    <link rel="alternate" hreflang="en" href={pageUrl} />
+    <link rel="alternate" hreflang="x-default" href={pageUrl} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Privacy Toolbox Guides" href="/feed.xml" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:site_name" content="Privacy Toolbox" />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    {type === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {type === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {type === 'article' && author && <meta property="article:author" content={author} />}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preload" href="/styles/global.css" as="style" />
+    <link rel="stylesheet" href="/styles/global.css" />
+    {schema.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  </head>
+  <body data-page-type={type}>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script src="/scripts/nav.js" defer></script>
+  </body>
+</html>

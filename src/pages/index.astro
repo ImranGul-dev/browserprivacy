@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolGrid from '../components/ToolGrid.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { tools } from '../data/tools';
+import { guides } from '../data/guides';
+import { breadcrumb, websiteSchema, organizationSchema, personSchema, itemListSchema } from '../data/schema';
+
+const featuredGuideSlugs = [
+  'what-not-to-paste-into-chatgpt',
+  'sanitize-error-logs-before-sharing',
+  'how-to-check-photo-gps',
+  'pdf-redaction-mistakes',
+  'verify-download-sha256-checksum',
+  'what-are-utm-parameters'
+];
+const featuredGuides = featuredGuideSlugs.map((slug) => guides.find((guide) => guide.slug === slug)).filter((guide) => guide !== undefined);
+const schema = [
+  websiteSchema(),
+  organizationSchema(),
+  personSchema(),
+  itemListSchema('Privacy Toolbox core tools', tools.map((tool) => ({ name: tool.name, url: `/${tool.slug}/` }))),
+  breadcrumb([{ name: 'Home', url: '/' }])
+];
+---
+<BaseLayout
+  title="Browser-Only Privacy Tools for Safer Sharing"
+  description="Clean sensitive text, logs, JSON, CSV data, screenshots, photo metadata, tracking links, and file hashes locally before sharing."
+  modifiedTime="2026-07-23"
+  schema={schema}
+>
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Local tools with clear limitations</span>
+        <h1>Check and clean private data before you share it</h1>
+        <p class="lede">Use focused browser tools for AI prompts, developer logs, structured data, screenshots, image metadata, tracking links, and file checksums—then review the exact final result yourself.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/remove-pii-before-chatgpt/">Clean text before AI</a>
+          <a class="btn" href="/view-image-metadata/">Check photo metadata</a>
+          <a class="btn btn-ghost" href="/tools/">Browse all tools</a>
+        </div>
+        <div class="stats-row trust-row">
+          <div class="stat"><strong>Text and AI</strong><span>Mask common identifiers and secrets while keeping useful context.</span></div>
+          <div class="stat"><strong>Developer data</strong><span>Sanitize logs, JSON payloads, JWT claims, and structured exports.</span></div>
+          <div class="stat"><strong>Images and files</strong><span>Inspect metadata, remove EXIF, redact pixels, and calculate hashes.</span></div>
+          <div class="stat"><strong>Manual review</strong><span>Every output is a draft—not a promise of complete anonymization.</span></div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="privacy-terminal" aria-label="Privacy review example">
+          <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="terminal-kicker">LOCAL REVIEW WORKFLOW</div>
+          <div class="terminal-line">1. Select only the necessary content</div>
+          <div class="terminal-line">2. Detect common identifiers or metadata</div>
+          <div class="terminal-line">3. Replace or remove risky values</div>
+          <div class="terminal-line">4. Inspect context the tool cannot understand</div>
+          <div class="terminal-line">5. Verify the exact downloaded or copied result</div>
+          <div class="terminal-line terminal-status">Status: safer first pass, human review required</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Focused utilities</span>
+        <h2>Choose the tool by what you are sharing</h2>
+      </div>
+      <p>The site now uses a smaller set of canonical tools instead of many near-duplicate pages. Each tool has its own workflow, limits, tests, and supporting guides.</p>
+    </div>
+    <ToolGrid tools={tools} />
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Privacy workflows</span>
+        <h2>Start with the type of exposure you need to reduce</h2>
+      </div>
+    </div>
+    <div class="grid workflow-hubs">
+      <a class="card" href="/ai-privacy-tools/"><div class="card-icon">AI</div><h3>AI prompts and private text</h3><p>Remove unnecessary identities, account references, private links, credentials, and business context before using an AI assistant.</p></a>
+      <a class="card" href="/developer-privacy-tools/"><div class="card-icon">DV</div><h3>Logs and structured data</h3><p>Keep useful debugging structure while masking access-bearing secrets, customer identifiers, paths, payloads, and token claims.</p></a>
+      <a class="card" href="/file-privacy-tools/"><div class="card-icon">FL</div><h3>Photos, documents, and files</h3><p>Inspect image metadata, create clean copies, redact visible pixels, verify downloads, and follow safer PDF and ZIP workflows.</p></a>
+    </div>
+  </section>
+
+  <section class="section trust-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Trust through transparency</span>
+        <h2>Understand exactly what the tools do</h2>
+      </div>
+      <p>Local processing is useful, but it is not a complete security or compliance guarantee. The site documents implementation boundaries instead of hiding them.</p>
+    </div>
+    <div class="grid">
+      <a class="content-card trust-link-card" href="/how-it-works/"><h3>How it works</h3><p>See how text parsing, canvas rendering, metadata inspection, URL cleaning, and hashing are implemented.</p></a>
+      <a class="content-card trust-link-card" href="/methodology/"><h3>Testing methodology</h3><p>Review representative test cases, network checks, known false-positive risks, and unsupported formats.</p></a>
+      <a class="content-card trust-link-card" href="/changelog/"><h3>Version history</h3><p>Track consolidation, restored legacy topics, redirect changes, tool additions, and privacy-claim updates.</p></a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Practical guides</span>
+        <h2>Learn the complete workflow, not only the button click</h2>
+      </div>
+      <a class="btn" href="/guides/">View all guides</a>
+    </div>
+    <div class="grid">
+      {featuredGuides.map((guide) => (
+        <a class="guide-card" href={`/guides/${guide.slug}/`}>
+          <span class="tag">{guide.category}</span>
+          <h3>{guide.title}</h3>
+          <p>{guide.metaDescription}</p>
+          <div class="guide-meta"><span>{guide.readingTime}</span><span>Updated {guide.updated}</span></div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <CtaBand title="Start with the content you are about to share" text="Choose a focused local tool, inspect the result, and follow the manual checklist for that content type." href="/tools/" label="Browse all tools" />
+</BaseLayout>

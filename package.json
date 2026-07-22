@@ -1,0 +1,19 @@
+{
+  "name": "privacy-toolbox",
+  "version": "2.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check:scripts": "node --check public/scripts/nav.js && node --check public/scripts/toolbox.js && node --check public/scripts/file-privacy.js",
+    "check": "npm run check:scripts && npm run build"
+  },
+  "dependencies": {
+    "astro": "7.0.6"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolGrid from '../../components/ToolGrid.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { guides, getGuide } from '../../data/guides';
+import { tools } from '../../data/tools';
+import { articleSchema, breadcrumb } from '../../data/schema';
+
+export function getStaticPaths() {
+  return guides.map((guide) => ({ params: { slug: guide.slug }, props: { slug: guide.slug } }));
+}
+
+const { slug } = Astro.props;
+const guide = getGuide(slug);
+if (!guide) throw new Error(`Missing guide: ${slug}`);
+const relatedTools = tools.filter((tool) => guide.relatedTools.includes(tool.slug));
+const relatedGuides = guides.filter((item) => guide.relatedGuides.includes(item.slug));
+const schema = [
+  articleSchema(guide),
+  breadcrumb([
+    { name: 'Home', url: '/' },
+    { name: 'Guides', url: '/guides/' },
+    { name: guide.title, url: `/guides/${guide.slug}/` }
+  ])
+];
+---
+<BaseLayout
+  title={guide.seoTitle}
+  description={guide.metaDescription}
+  type="article"
+  publishedTime={guide.published}
+  modifiedTime={guide.updated}
+  author="Imran Gul"
+  schema={schema}
+>
+  <section class="page-hero article-hero">
+    <div class="breadcrumbs"><a href="/">Home</a> / <a href="/guides/">Guides</a> / {guide.title}</div>
+    <span class="eyebrow">{guide.category} guide</span>
+    <h1>{guide.title}</h1>
+    <p class="lede">{guide.intro}</p>
+    <div class="article-meta" aria-label="Article information">
+      <span>By <a href="/about/">Imran Gul</a></span>
+      <span>Updated <time datetime={guide.updated}>{guide.updated}</time></span>
+      <span>{guide.readingTime}</span>
+    </div>
+  </section>
+
+  <section class="section page-grid article-layout">
+    <article class="prose">
+      <aside class="quick-answer" aria-labelledby="quick-answer-heading">
+        <h2 id="quick-answer-heading">Quick answer</h2>
+        <p>{guide.quickAnswer}</p>
+      </aside>
+
+      {guide.sections.map((section) => (
+        <section>
+          <h2>{section.heading}</h2>
+          {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+          {section.bullets && <ul>{section.bullets.map((item) => <li>{item}</li>)}</ul>}
+        </section>
+      ))}
+
+      {guide.checklist && (
+        <section class="article-checklist">
+          <h2>Final review checklist</h2>
+          <ul>{guide.checklist.map((item) => <li>{item}</li>)}</ul>
+        </section>
+      )}
+
+      <section class="author-box" aria-label="About the author">
+        <div class="author-avatar" aria-hidden="true">IG</div>
+        <div>
+          <h2>Written and maintained by Imran Gul</h2>
+          <p>Imran is a web developer who builds browser-based tools and maintains Privacy Toolbox. These guides explain practical workflows and limitations; they are not legal, medical, compliance, or security advice.</p>
+          <a href="/methodology/">Read the testing methodology</a>
+        </div>
+      </section>
+    </article>
+
+    <aside class="sidebar">
+      <div class="content-card">
+        <h2>Use a related tool</h2>
+        {relatedTools.length ? relatedTools.map((tool) => <a href={`/${tool.slug}/`}>{tool.name}</a>) : <a href="/tools/">Browse all tools</a>}
+      </div>
+      {relatedGuides.length > 0 && (
+        <div class="content-card">
+          <h2>Continue reading</h2>
+          {relatedGuides.map((item) => <a href={`/guides/${item.slug}/`}>{item.title}</a>)}
+        </div>
+      )}
+      <div class="content-card trust-card">
+        <h2>Important limitation</h2>
+        <p>Automated tools and checklists can miss context-specific information. Review the final artifact manually and follow your organization’s approved process.</p>
+      </div>
+    </aside>
+  </section>
+
+  {relatedTools.length > 0 && (
+    <section class="section">
+      <div class="section-heading">
+        <div><span class="eyebrow">Apply the guide</span><h2>Related browser tools</h2></div>
+        <p>Use local processing for the first pass, then review the output before sharing.</p>
+      </div>
+      <ToolGrid tools={relatedTools} />
+    </section>
+  )}
+
+  <CtaBand title="Choose the tool that matches your content" text="Clean text, logs, JSON, CSV data, screenshots, image metadata, links, or file hashes in your browser." href="/tools/" label="Browse tools" />
+</BaseLayout>

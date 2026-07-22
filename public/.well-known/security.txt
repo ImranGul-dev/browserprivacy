@@ -1,0 +1,5 @@
+Contact: mailto:support@privacy-toolbox.com
+Canonical: https://privacy-toolbox.com/.well-known/security.txt
+Preferred-Languages: en
+Expires: 2027-07-23T00:00:00.000Z
+Policy: https://privacy-toolbox.com/privacy-policy/

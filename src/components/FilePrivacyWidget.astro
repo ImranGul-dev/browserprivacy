@@ -1,0 +1,83 @@
+---
+import type { ToolPage } from '../data/tools';
+const { tool } = Astro.props as { tool: ToolPage };
+const isRemover = tool.mode === 'image-metadata-remover';
+const isViewer = tool.mode === 'image-metadata-viewer';
+const isHash = tool.mode === 'sha256-checksum';
+---
+<section class="tool-panel" data-file-tool data-mode={tool.mode} data-tool-name={tool.name}>
+  <div class="panel-head">
+    <div>
+      <h2>{tool.name}</h2>
+      <p>{tool.interfaceHint}</p>
+    </div>
+    <div class="tool-privacy-note">Local processing: the selected file is read by JavaScript in this browser.</div>
+  </div>
+
+  {isRemover && (
+    <div class="file-tool-layout">
+      <div class="field">
+        <label for="metadata-image-file">Choose an image</label>
+        <input id="metadata-image-file" data-file-input type="file" accept="image/jpeg,image/png,image/webp" />
+        <p class="field-help">Supported: JPEG, PNG, and WebP. Maximum recommended size: 50 MB and 40 megapixels.</p>
+        <div class="tool-controls">
+          <button class="btn btn-primary" type="button" data-run-file-tool disabled>{tool.primaryButton}</button>
+          <button class="btn" type="button" data-clear-file-tool>Clear locally</button>
+        </div>
+        <div class="alert" data-file-status>Choose an image to begin.</div>
+      </div>
+      <div class="file-preview-card">
+        <div class="file-preview-empty" data-preview-empty>Image preview will appear here.</div>
+        <img data-image-preview alt="Local preview of the selected image" hidden />
+        <dl class="metadata-list" data-file-summary></dl>
+      </div>
+    </div>
+  )}
+
+  {isViewer && (
+    <div class="file-tool-layout">
+      <div class="field">
+        <label for="metadata-viewer-file">Choose an image to inspect</label>
+        <input id="metadata-viewer-file" data-file-input type="file" accept="image/jpeg,image/png,image/webp" />
+        <p class="field-help">The report focuses on common privacy-relevant EXIF, GPS, PNG, and WebP fields. It is not a forensic metadata parser.</p>
+        <div class="tool-controls">
+          <button class="btn btn-primary" type="button" data-run-file-tool disabled>{tool.primaryButton}</button>
+          <button class="btn" type="button" data-clear-file-tool>Clear locally</button>
+        </div>
+        <div class="alert" data-file-status>Choose an image to begin.</div>
+      </div>
+      <div>
+        <h3>Local metadata report</h3>
+        <div class="metadata-report" data-metadata-report>
+          <p>No file has been inspected.</p>
+        </div>
+      </div>
+    </div>
+  )}
+
+  {isHash && (
+    <div class="file-tool-layout">
+      <div class="field">
+        <label for="checksum-file">Choose a file</label>
+        <input id="checksum-file" data-file-input type="file" />
+        <label for="expected-hash">Expected SHA-256 (optional)</label>
+        <input id="expected-hash" data-expected-hash type="text" inputmode="text" autocomplete="off" placeholder="Paste the trusted 64-character SHA-256 value" />
+        <p class="field-help">Recommended maximum size: 250 MB. Very large files require the browser to hold the file bytes in memory.</p>
+        <div class="tool-controls">
+          <button class="btn btn-primary" type="button" data-run-file-tool disabled>{tool.primaryButton}</button>
+          <button class="btn" type="button" data-clear-file-tool>Clear locally</button>
+        </div>
+        <div class="alert" data-file-status>Choose a file to begin.</div>
+      </div>
+      <div>
+        <h3>Calculated SHA-256</h3>
+        <div class="hash-output" data-hash-output aria-live="polite">No checksum calculated.</div>
+        <div class="tool-controls">
+          <button class="btn" type="button" data-copy-hash disabled>Copy hash</button>
+        </div>
+        <div class="hash-comparison" data-hash-comparison></div>
+      </div>
+    </div>
+  )}
+</section>
+<script src="/scripts/file-privacy.js" defer></script>

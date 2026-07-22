@@ -1,0 +1,236 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolWidget from '../components/ToolWidget.astro';
+import FilePrivacyWidget from '../components/FilePrivacyWidget.astro';
+import ToolGrid from '../components/ToolGrid.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { tools, getTool } from '../data/tools';
+import { getGuide } from '../data/guides';
+import { mainPages, getMainPage } from '../data/mainPages';
+import { breadcrumb, softwareSchema, faqSchema, organizationSchema, personSchema } from '../data/schema';
+
+export function getStaticPaths() {
+  return [
+    ...tools.map((tool) => ({ params: { slug: tool.slug }, props: { slug: tool.slug, type: 'tool' } })),
+    ...mainPages.map((page) => ({ params: { slug: page.slug }, props: { slug: page.slug, type: 'main' } }))
+  ];
+}
+
+const { slug, type } = Astro.props;
+const tool = type === 'tool' ? getTool(slug) : undefined;
+const page = type === 'main' ? getMainPage(slug) : undefined;
+if (!tool && !page) throw new Error(`Missing page: ${slug}`);
+
+const title = tool ? tool.seoTitle : page!.seoTitle;
+const description = tool ? tool.metaDescription : page!.metaDescription;
+const relatedTools = tool
+  ? tools.filter((item) => tool.relatedTools.includes(item.slug))
+  : tools.filter((item) => page?.relatedToolSlugs?.includes(item.slug)).slice(0, 8);
+const relatedGuides = tool ? tool.relatedGuides.map((guideSlug) => getGuide(guideSlug)).filter((guide) => guide !== undefined) : [];
+const usesFileWidget = tool && ['image-metadata-remover', 'image-metadata-viewer', 'sha256-checksum'].includes(tool.mode);
+const schema = tool
+  ? [
+      softwareSchema(tool),
+      faqSchema(tool.faq),
+      breadcrumb([
+        { name: 'Home', url: '/' },
+        { name: 'Tools', url: '/tools/' },
+        { name: tool.name, url: `/${tool.slug}/` }
+      ])
+    ]
+  : [
+      organizationSchema(),
+      ...(page!.slug === 'about' || page!.slug === 'methodology' ? [personSchema()] : []),
+      breadcrumb([{ name: 'Home', url: '/' }, { name: page!.title, url: `/${page!.slug}/` }])
+    ];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  modifiedTime={tool ? tool.updated : page!.updated}
+  author="Imran Gul"
+  schema={schema}
+>
+  {tool ? (
+    <>
+      <section class="page-hero tool-hero">
+        <div class="breadcrumbs"><a href="/">Home</a> / <a href="/tools/">Tools</a> / {tool.name}</div>
+        <span class="eyebrow">{tool.category} · Local browser tool</span>
+        <h1>{tool.h1}</h1>
+        <p class="lede">{tool.shortDescription} {tool.purpose}</p>
+        <div class="article-meta">
+          <span>Maintained by <a href="/about/">Imran Gul</a></span>
+          <span>Reviewed <time datetime={tool.updated}>{tool.updated}</time></span>
+          <span>No account required</span>
+        </div>
+      </section>
+
+      <section class="tool-page">
+        {usesFileWidget ? <FilePrivacyWidget tool={tool} /> : <ToolWidget tool={tool} />}
+      </section>
+
+      <section class="section page-grid tool-content-grid">
+        <article class="prose">
+          <section>
+            <h2>What this tool does</h2>
+            {tool.overview.map((paragraph) => <p>{paragraph}</p>)}
+          </section>
+
+          <section>
+            <h2>Recommended workflow</h2>
+            <ol class="workflow-list">
+              {tool.workflow.map((step) => (
+                <li>
+                  <strong>{step.title}</strong>
+                  <span>{step.text}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section>
+            <h2>What it checks</h2>
+            <p>The current tool version is designed to handle the following areas:</p>
+            <ul>{tool.detects.map((item) => <li>{item}</li>)}</ul>
+          </section>
+
+          <section>
+            <h2>Example</h2>
+            <div class="example-grid">
+              <div class="example-card example-unsafe"><h3>Before</h3><code>{tool.exampleUnsafe}</code></div>
+              <div class="example-card example-clean"><h3>Safer output</h3><code>{tool.exampleClean}</code></div>
+            </div>
+          </section>
+
+          <section>
+            <h2>Safety checks before sharing</h2>
+            <ul class="check-list">{tool.safetyChecks.map((item) => <li>{item}</li>)}</ul>
+          </section>
+
+          <section>
+            <h2>Representative test coverage</h2>
+            <p>This page is checked with representative examples, not every possible format or file produced by every application.</p>
+            <ul>{tool.testedWith.map((item) => <li>{item}</li>)}</ul>
+            <p><a href="/methodology/">Read the testing methodology and known limitations.</a></p>
+          </section>
+
+          <section>
+            <h2>Known limitations</h2>
+            <p>Automated processing can miss unusual formats, indirect identifiers, hidden data, unsupported structures, and information that requires human judgment. This tool may miss:</p>
+            <ul>{tool.mayMiss.map((item) => <li>{item}</li>)}</ul>
+            <p>Do not describe the result as fully anonymous, legally compliant, secure, or impossible to re-identify. Review the exact final artifact before sharing it.</p>
+          </section>
+
+          <section>
+            <h2>Frequently asked questions</h2>
+            <div class="faq-list">
+              {tool.faq.map((item) => (
+                <details>
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+
+          <section class="author-box" aria-label="Tool maintainer">
+            <div class="author-avatar" aria-hidden="true">IG</div>
+            <div>
+              <h2>Maintained by Imran Gul</h2>
+              <p>Imran is a web developer who builds browser-based utilities and maintains the tool code, content, test notes, and migration redirects for Privacy Toolbox.</p>
+              <a href="/changelog/">View the changelog</a>
+            </div>
+          </section>
+        </article>
+
+        <aside class="sidebar">
+          <div class="content-card">
+            <h2>Best for</h2>
+            <ul class="compact-list">{tool.audience.map((item) => <li>{item}</li>)}</ul>
+          </div>
+          <div class="content-card">
+            <h2>Privacy reminder</h2>
+            <p>The normal workflow runs locally in the browser, but local processing does not guarantee complete anonymization or safe sharing.</p>
+            <a href="/browser-only-privacy/">What browser-only means</a>
+          </div>
+          {relatedGuides.length > 0 && (
+            <div class="content-card">
+              <h2>Related guides</h2>
+              {relatedGuides.map((guide) => <a href={`/guides/${guide.slug}/`}>{guide.title}</a>)}
+            </div>
+          )}
+        </aside>
+      </section>
+
+      {relatedTools.length > 0 && (
+        <section class="section">
+          <div class="section-heading">
+            <div><span class="eyebrow">Continue safely</span><h2>Related tools</h2></div>
+            <p>Choose the next tool based on the content you need to inspect or clean.</p>
+          </div>
+          <ToolGrid tools={relatedTools} />
+        </section>
+      )}
+
+      <CtaBand title="Need a different privacy workflow?" text="Browse focused tools for AI text, logs, structured data, screenshots, image metadata, links, and file verification." href="/tools/" label="Browse tools" />
+    </>
+  ) : (
+    <>
+      <section class="page-hero">
+        <div class="breadcrumbs"><a href="/">Home</a> / {page!.title}</div>
+        <span class="eyebrow">{page!.eyebrow}</span>
+        <h1>{page!.h1}</h1>
+        <p class="lede">{page!.intro}</p>
+        <div class="article-meta"><span>Updated <time datetime={page!.updated}>{page!.updated}</time></span></div>
+      </section>
+
+      <section class="section page-grid">
+        <article class="prose">
+          {page!.sections.map((section) => (
+            <section>
+              <h2>{section.heading}</h2>
+              <p>{section.body}</p>
+              {section.bullets && <ul>{section.bullets.map((item) => <li>{item}</li>)}</ul>}
+            </section>
+          ))}
+
+          {['about', 'methodology'].includes(page!.slug) && (
+            <section class="author-box">
+              <div class="author-avatar" aria-hidden="true">IG</div>
+              <div>
+                <h2>Imran Gul</h2>
+                <p>Web developer and maintainer of Privacy Toolbox. Tool claims are intentionally limited to the implemented browser workflows and representative tests described on this site.</p>
+              </div>
+            </section>
+          )}
+        </article>
+
+        <aside class="sidebar">
+          <div class="content-card">
+            <h2>Core tools</h2>
+            <a href="/remove-pii-before-chatgpt/">Remove PII before AI</a>
+            <a href="/sanitize-logs-before-chatgpt/">Sanitize logs</a>
+            <a href="/view-image-metadata/">View image metadata</a>
+            <a href="/sha256-checksum/">Calculate SHA-256</a>
+          </div>
+          <div class="content-card">
+            <h2>Trust and transparency</h2>
+            <a href="/how-it-works/">How it works</a>
+            <a href="/methodology/">Testing methodology</a>
+            <a href="/changelog/">Changelog</a>
+            <a href="/disclaimer/">Limitations</a>
+          </div>
+        </aside>
+      </section>
+
+      {relatedTools.length > 0 && (
+        <section class="section">
+          <div class="section-heading"><div><span class="eyebrow">Relevant utilities</span><h2>Recommended tools</h2></div></div>
+          <ToolGrid tools={relatedTools} />
+        </section>
+      )}
+
+      <CtaBand title={page!.ctaTitle} text={page!.ctaText} href={page!.ctaHref} label="Continue" />
+    </>
+  )}
+</BaseLayout>

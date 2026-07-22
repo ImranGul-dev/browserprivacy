@@ -1,0 +1,9 @@
+---
+import ToolCard from './ToolCard.astro';
+import type { ToolPage } from '../data/tools';
+const { tools, limit } = Astro.props as { tools: ToolPage[]; limit?: number };
+const shown = limit ? tools.slice(0, limit) : tools;
+---
+<div class="grid">
+  {shown.map((tool) => <ToolCard tool={tool} />)}
+</div>
