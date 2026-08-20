@@ -4,7 +4,7 @@ import ToolGrid from '../../components/ToolGrid.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { guides, getGuide } from '../../data/guides';
 import { tools } from '../../data/tools';
-import { articleSchema, breadcrumb } from '../../data/schema';
+import { articleSchema, breadcrumb, itemListSchema } from '../../data/schema';
 
 export function getStaticPaths() {
   return guides.map((guide) => ({ params: { slug: guide.slug }, props: { slug: guide.slug } }));
@@ -21,7 +21,9 @@ const schema = [
     { name: 'Home', url: '/' },
     { name: 'Guides', url: '/guides/' },
     { name: guide.title, url: `/guides/${guide.slug}/` }
-  ])
+  ]),
+  ...(relatedTools.length ? [itemListSchema('Related privacy tools', relatedTools.map((tool) => ({ name: tool.name, url: `/${tool.slug}/` })))] : []),
+  ...(relatedGuides.length ? [itemListSchema('Related privacy guides', relatedGuides.map((item) => ({ name: item.title, url: `/guides/${item.slug}/` })))] : [])
 ];
 ---
 <BaseLayout
@@ -40,7 +42,8 @@ const schema = [
     <p class="lede">{guide.intro}</p>
     <div class="article-meta" aria-label="Article information">
       <span>By <a href="/about/">Imran Gul</a></span>
-      <span>Updated <time datetime={guide.updated}>{guide.updated}</time></span>
+      <span>Published <time datetime={guide.published}>{guide.published}</time></span>
+      {guide.updated !== guide.published && <span>Updated <time datetime={guide.updated}>{guide.updated}</time></span>}
       <span>{guide.readingTime}</span>
     </div>
   </section>
@@ -72,7 +75,7 @@ const schema = [
         <div>
           <h2>Written and maintained by Imran Gul</h2>
           <p>Imran is a web developer who builds browser-based tools and maintains Privacy Toolbox. These guides explain practical workflows and limitations; they are not legal, medical, compliance, or security advice.</p>
-          <a href="/methodology/">Read the testing methodology</a>
+          <p><a href="/about/">About the maintainer</a> · <a href="/methodology/">Testing methodology</a> · <a href="https://github.com/ImranGul-dev/browserprivacy">Public source code</a></p>
         </div>
       </section>
     </article>
