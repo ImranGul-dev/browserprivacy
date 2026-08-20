@@ -24,7 +24,7 @@ const isHash = tool.mode === 'sha256-checksum';
           <button class="btn btn-primary" type="button" data-run-file-tool disabled>{tool.primaryButton}</button>
           <button class="btn" type="button" data-clear-file-tool>Clear locally</button>
         </div>
-        <div class="alert" data-file-status>Choose an image to begin.</div>
+        <div class="alert" data-file-status aria-live="polite">Choose an image to begin.</div>
       </div>
       <div class="file-preview-card">
         <div class="file-preview-empty" data-preview-empty>Image preview will appear here.</div>
@@ -44,11 +44,11 @@ const isHash = tool.mode === 'sha256-checksum';
           <button class="btn btn-primary" type="button" data-run-file-tool disabled>{tool.primaryButton}</button>
           <button class="btn" type="button" data-clear-file-tool>Clear locally</button>
         </div>
-        <div class="alert" data-file-status>Choose an image to begin.</div>
+        <div class="alert" data-file-status aria-live="polite">Choose an image to begin.</div>
       </div>
       <div>
         <h3>Local metadata report</h3>
-        <div class="metadata-report" data-metadata-report>
+        <div class="metadata-report" data-metadata-report aria-live="polite">
           <p>No file has been inspected.</p>
         </div>
       </div>
@@ -61,13 +61,13 @@ const isHash = tool.mode === 'sha256-checksum';
         <label for="checksum-file">Choose a file</label>
         <input id="checksum-file" data-file-input type="file" />
         <label for="expected-hash">Expected SHA-256 (optional)</label>
-        <input id="expected-hash" data-expected-hash type="text" inputmode="text" autocomplete="off" placeholder="Paste the trusted 64-character SHA-256 value" />
+        <input id="expected-hash" data-expected-hash type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste the trusted 64-character SHA-256 value" />
         <p class="field-help">Recommended maximum size: 250 MB. Very large files require the browser to hold the file bytes in memory.</p>
         <div class="tool-controls">
           <button class="btn btn-primary" type="button" data-run-file-tool disabled>{tool.primaryButton}</button>
           <button class="btn" type="button" data-clear-file-tool>Clear locally</button>
         </div>
-        <div class="alert" data-file-status>Choose a file to begin.</div>
+        <div class="alert" data-file-status aria-live="polite">Choose a file to begin.</div>
       </div>
       <div>
         <h3>Calculated SHA-256</h3>
@@ -75,7 +75,7 @@ const isHash = tool.mode === 'sha256-checksum';
         <div class="tool-controls">
           <button class="btn" type="button" data-copy-hash disabled>Copy hash</button>
         </div>
-        <div class="hash-comparison" data-hash-comparison></div>
+        <div class="hash-comparison" data-hash-comparison aria-live="polite"></div>
       </div>
     </div>
   )}
