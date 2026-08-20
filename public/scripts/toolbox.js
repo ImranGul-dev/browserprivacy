@@ -116,13 +116,31 @@
     return merged;
   }
 
+  function normalizeJsonKeyParts(value) {
+    return String(value || '')
+      .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter(Boolean);
+  }
+
+  function jsonKeyMatches(key, maskKey) {
+    const keyParts = normalizeJsonKeyParts(key);
+    const maskParts = normalizeJsonKeyParts(maskKey);
+    if (!maskParts.length || maskParts.length > keyParts.length) return false;
+    for (let start = 0; start <= keyParts.length - maskParts.length; start += 1) {
+      if (maskParts.every((part, index) => keyParts[start + index] === part)) return true;
+    }
+    return false;
+  }
+
   function maskByKey(obj, keys, counts, options) {
     if (Array.isArray(obj)) return obj.map((item) => maskByKey(item, keys, counts, options));
     if (obj && typeof obj === 'object') {
       const clone = {};
       for (const [key, value] of Object.entries(obj)) {
         const lower = key.toLowerCase();
-        if (keys.some((maskKey) => lower === maskKey || lower.includes(maskKey))) {
+        if (keys.some((maskKey) => lower === maskKey || jsonKeyMatches(key, maskKey))) {
           counts['Selected JSON keys'] = (counts['Selected JSON keys'] || 0) + 1;
           clone[key] = '[REDACTED]';
         } else {
@@ -172,7 +190,7 @@
       value += char;
     }
     if (value || row.length) { row.push(value); rows.push(row); }
-    return rows.filter((r) => r.some((cell) => cell.trim() !== ''));
+    return rows;
   }
 
   function csvEscape(value) {
@@ -299,6 +317,7 @@
     const urlMode = root.querySelector('[data-url-clean-mode]');
     const removeFragment = root.querySelector('[data-remove-fragment]');
     const urlReport = root.querySelector('[data-url-report]');
+    const jsonStatus = root.querySelector('[data-json-status]');
     const patternInputs = [...root.querySelectorAll('[data-pattern-key]')];
     if (!input || !output || !run) return;
 
@@ -349,9 +368,19 @@
         output.textContent = result.output || 'No output generated.';
         renderStats(stats, result.counts || {});
         if (urlReport && result.report) urlReport.textContent = result.report;
+        if (jsonStatus && (mode === 'json-redactor' || mode === 'json-key-masker')) {
+          jsonStatus.textContent = result.ok
+            ? 'Valid JSON parsed successfully. Sensitive key matches were applied recursively, then remaining strings were scanned.'
+            : 'Input was not valid JSON, so the tool used text-only redaction. Fix the JSON syntax before relying on structural key masking.';
+          jsonStatus.className = `alert${result.ok ? ' ok' : ' danger'}`;
+        }
       } catch (error) {
         output.textContent = error.message || 'The input could not be processed. Check the format and try again.';
         renderStats(stats, {});
+        if (jsonStatus) {
+          jsonStatus.textContent = 'The JSON input could not be processed. Check the syntax and try again.';
+          jsonStatus.className = 'alert danger';
+        }
       }
     });
 
@@ -368,6 +397,10 @@
       output.textContent = mode === 'jwt-checker' ? 'Decoded JWT details will appear here.' : mode === 'url-cleaner' ? 'Cleaned URLs will appear here.' : 'Results will appear here after scanning.';
       if (fileInput) fileInput.value = '';
       if (urlReport) urlReport.textContent = 'Run the cleaner to see which parameter names were removed and which were preserved.';
+      if (jsonStatus) {
+        jsonStatus.textContent = 'Valid JSON is parsed recursively. Invalid JSON falls back to text-only redaction and will be clearly flagged.';
+        jsonStatus.className = 'alert';
+      }
       renderStats(stats, {});
     });
   }
