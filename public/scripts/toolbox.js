@@ -30,29 +30,64 @@
     'json-key-masker': ['Email', 'Phone', 'JWT', 'Bearer token', 'API key assignment', 'IP address', 'URL', 'ID', 'Possible name']
   };
 
-  const trackingParams = new Set([
+  const knownTrackingParams = new Set([
     'utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','utm_name',
     'fbclid','gclid','gbraid','wbraid','msclkid','mc_cid','mc_eid','yclid','dclid','igshid',
-    'ref','referrer','source','spm','vero_id','_hsenc','_hsmi','mkt_tok','email','email_id','user','userid','user_id','session','sid'
+    'vero_id','_hsenc','_hsmi','mkt_tok','spm'
   ]);
+
+  const reviewOnlyParams = new Set([
+    'ref','referrer','source','email','email_id','user','userid','user_id','session','sid'
+  ]);
+
+  const stableSecretKeys = new Set(['JWT', 'Bearer token', 'API key assignment', 'AWS-like key', 'Database URL']);
+  const sampleJwt = 'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJ1c2VyLTEyMyIsImVtYWlsIjoiYWxpY2VAZXhhbXBsZS5jb20iLCJyb2xlIjoiZWRpdG9yIiwiZXhwIjoyMDAwMDAwMDAwfQ.';
 
   function escapeHtml(value) {
     return String(value).replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
   }
 
-  function redactText(input, mode) {
-    const keys = modePatternKeys[mode] || modePatternKeys['text-redactor'];
+  function createReplacementState() {
+    return { values: new Map(), counters: {} };
+  }
+
+  function placeholderLabel(pattern) {
+    return pattern.placeholder
+      .replace(/\$1/g, '')
+      .replace(/[^A-Z]+/g, '') || pattern.key.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
+  }
+
+  function replacementFor(pattern, match, args, options) {
+    if (pattern.placeholder.includes('$1')) return pattern.placeholder.replace('$1', args[0] || '');
+    if (!options.stable || stableSecretKeys.has(pattern.key)) return pattern.placeholder;
+
+    const normalized = String(match).trim().toLowerCase();
+    const mapKey = `${pattern.key}:${normalized}`;
+    if (options.state.values.has(mapKey)) return options.state.values.get(mapKey);
+
+    const label = placeholderLabel(pattern);
+    options.state.counters[label] = (options.state.counters[label] || 0) + 1;
+    const replacement = `[${label}_${options.state.counters[label]}]`;
+    options.state.values.set(mapKey, replacement);
+    return replacement;
+  }
+
+  function redactText(input, mode, options = {}) {
+    const defaultKeys = modePatternKeys[mode] || modePatternKeys['text-redactor'];
+    const keys = Array.isArray(options.enabledKeys) ? options.enabledKeys : defaultKeys;
     const active = patterns.filter((pattern) => keys.includes(pattern.key));
     const counts = {};
+    const state = options.state || createReplacementState();
     let output = input;
+
     for (const pattern of active) {
-      output = output.replace(pattern.regex, function () {
+      output = output.replace(pattern.regex, function (match) {
+        const args = Array.prototype.slice.call(arguments, 1);
         counts[pattern.key] = (counts[pattern.key] || 0) + 1;
-        if (pattern.placeholder.includes('$1')) return pattern.placeholder.replace('$1', arguments[1] || '');
-        return pattern.placeholder;
+        return replacementFor(pattern, match, args, { ...options, state });
       });
     }
-    return { output, counts };
+    return { output, counts, state };
   }
 
   function renderStats(container, counts) {
@@ -75,8 +110,14 @@
     URL.revokeObjectURL(url);
   }
 
-  function maskByKey(obj, keys, counts) {
-    if (Array.isArray(obj)) return obj.map((item) => maskByKey(item, keys, counts));
+  function mergeCounts(a, b) {
+    const merged = { ...a };
+    for (const [key, value] of Object.entries(b || {})) merged[key] = (merged[key] || 0) + value;
+    return merged;
+  }
+
+  function maskByKey(obj, keys, counts, options) {
+    if (Array.isArray(obj)) return obj.map((item) => maskByKey(item, keys, counts, options));
     if (obj && typeof obj === 'object') {
       const clone = {};
       for (const [key, value] of Object.entries(obj)) {
@@ -85,36 +126,30 @@
           counts['Selected JSON keys'] = (counts['Selected JSON keys'] || 0) + 1;
           clone[key] = '[REDACTED]';
         } else {
-          clone[key] = maskByKey(value, keys, counts);
+          clone[key] = maskByKey(value, keys, counts, options);
         }
       }
       return clone;
     }
     if (typeof obj === 'string') {
-      const result = redactText(obj, 'json-redactor');
+      const result = redactText(obj, 'json-redactor', options);
       Object.assign(counts, mergeCounts(counts, result.counts));
       return result.output;
     }
     return obj;
   }
 
-  function mergeCounts(a, b) {
-    const merged = { ...a };
-    for (const [key, value] of Object.entries(b || {})) merged[key] = (merged[key] || 0) + value;
-    return merged;
-  }
-
-  function processJson(input, keyString) {
+  function processJson(input, keyString, options = {}) {
     const keys = keyString
       ? keyString.split(',').map((item) => item.trim().toLowerCase()).filter(Boolean)
       : ['email','phone','name','address','token','secret','password','api_key','access_token','refresh_token','user_id','customer_id','account_id'];
     const counts = {};
     try {
       const parsed = JSON.parse(input);
-      const masked = maskByKey(parsed, keys, counts);
+      const masked = maskByKey(parsed, keys, counts, options);
       return { output: JSON.stringify(masked, null, 2), counts, ok: true };
     } catch (error) {
-      const fallback = redactText(input, 'json-redactor');
+      const fallback = redactText(input, 'json-redactor', options);
       return { output: fallback.output, counts: fallback.counts, ok: false };
     }
   }
@@ -146,7 +181,7 @@
     return string;
   }
 
-  function processCsv(input, mode) {
+  function processCsv(input, mode, options = {}) {
     const rows = parseCsvRows(input);
     if (!rows.length) return { output: '', counts: {}, summary: 'No CSV rows found.' };
     const header = rows[0];
@@ -163,8 +198,10 @@
       const summary = columnHits.map((item) => `${item.name}: ${item.hitCount} possible sensitive value${item.hitCount === 1 ? '' : 's'}`).join('\n');
       return { output: summary, counts: Object.fromEntries(columnHits.filter((c) => c.hitCount).map((c) => [c.name, c.hitCount])) };
     }
+
+    const state = options.state || createReplacementState();
     const cleanedRows = rows.map((row) => row.map((cell) => {
-      const result = redactText(cell, 'csv-anonymizer');
+      const result = redactText(cell, 'csv-anonymizer', { ...options, state });
       Object.assign(counts, mergeCounts(counts, result.counts));
       return result.output;
     }));
@@ -172,27 +209,50 @@
     return { output, counts };
   }
 
-  function cleanUrls(input) {
+  function cleanUrls(input, mode, removeFragment) {
     const urlRegex = /https?:\/\/[^\s<>"]+/gi;
     let removed = 0;
     let processed = 0;
+    let fragmentsRemoved = 0;
+    const removedNames = new Set();
+    const keptNames = new Set();
+
     const output = input.replace(urlRegex, (match) => {
       processed++;
       try {
         const url = new URL(match);
-        const before = [...url.searchParams.keys()].length;
         for (const key of [...url.searchParams.keys()]) {
-          if (trackingParams.has(key.toLowerCase()) || key.toLowerCase().startsWith('utm_')) url.searchParams.delete(key);
+          const lower = key.toLowerCase();
+          const shouldRemove = lower.startsWith('utm_') || knownTrackingParams.has(lower) || (mode === 'review' && reviewOnlyParams.has(lower));
+          if (shouldRemove) {
+            url.searchParams.delete(key);
+            removed++;
+            removedNames.add(key);
+          } else {
+            keptNames.add(key);
+          }
         }
-        const after = [...url.searchParams.keys()].length;
-        removed += Math.max(0, before - after);
-        url.hash = '';
+        if (removeFragment && url.hash) {
+          url.hash = '';
+          fragmentsRemoved++;
+        }
         return url.toString();
       } catch (error) {
         return match;
       }
     });
-    return { output, counts: { 'URLs processed': processed, 'Parameters removed': removed } };
+
+    const removedLabel = removedNames.size ? [...removedNames].sort().join(', ') : 'none';
+    const keptLabel = keptNames.size ? [...keptNames].sort().join(', ') : 'none';
+    return {
+      output,
+      counts: {
+        'URLs processed': processed,
+        'Parameters removed': removed,
+        'Fragments removed': fragmentsRemoved
+      },
+      report: `Removed parameter names: ${removedLabel}. Preserved parameter names: ${keptLabel}. ${removeFragment ? 'Fragments were removed when present.' : 'Fragments were preserved.'}`
+    };
   }
 
   function base64UrlDecode(value) {
@@ -233,7 +293,29 @@
     const download = root.querySelector('[data-download-output]');
     const clear = root.querySelector('[data-clear-tool]');
     const maskKeys = root.querySelector('[data-mask-keys]');
+    const stablePlaceholders = root.querySelector('[data-stable-placeholders]');
+    const loadSample = root.querySelector('[data-load-sample]');
+    const loadJwtSample = root.querySelector('[data-load-jwt-sample]');
+    const urlMode = root.querySelector('[data-url-clean-mode]');
+    const removeFragment = root.querySelector('[data-remove-fragment]');
+    const urlReport = root.querySelector('[data-url-report]');
+    const patternInputs = [...root.querySelectorAll('[data-pattern-key]')];
     if (!input || !output || !run) return;
+
+    function enabledPatternKeys() {
+      if (!patternInputs.length) return null;
+      return patternInputs.filter((control) => control.checked).map((control) => control.value);
+    }
+
+    loadSample?.addEventListener('click', () => {
+      input.value = root.dataset.sample || '';
+      input.focus();
+    });
+
+    loadJwtSample?.addEventListener('click', () => {
+      input.value = sampleJwt;
+      input.focus();
+    });
 
     fileInput?.addEventListener('change', async () => {
       const file = fileInput.files && fileInput.files[0];
@@ -253,14 +335,20 @@
         return;
       }
       try {
+        const options = {
+          stable: stablePlaceholders ? stablePlaceholders.checked : false,
+          state: createReplacementState(),
+          enabledKeys: enabledPatternKeys()
+        };
         let result;
-        if (mode === 'json-redactor' || mode === 'json-key-masker') result = processJson(text, mode === 'json-key-masker' ? (maskKeys?.value || '') : '');
-        else if (mode === 'csv-scanner' || mode === 'csv-anonymizer') result = processCsv(text, mode);
-        else if (mode === 'url-cleaner') result = cleanUrls(text);
+        if (mode === 'json-redactor' || mode === 'json-key-masker') result = processJson(text, maskKeys?.value || '', options);
+        else if (mode === 'csv-scanner' || mode === 'csv-anonymizer') result = processCsv(text, mode, options);
+        else if (mode === 'url-cleaner') result = cleanUrls(text, urlMode?.value || 'safe', Boolean(removeFragment?.checked));
         else if (mode === 'jwt-checker') result = checkJwt(text);
-        else result = redactText(text, mode);
+        else result = redactText(text, mode, options);
         output.textContent = result.output || 'No output generated.';
         renderStats(stats, result.counts || {});
+        if (urlReport && result.report) urlReport.textContent = result.report;
       } catch (error) {
         output.textContent = error.message || 'The input could not be processed. Check the format and try again.';
         renderStats(stats, {});
@@ -277,7 +365,9 @@
     download?.addEventListener('click', () => downloadText('privacy-toolbox-cleaned.txt', output.textContent || '', 'text/plain'));
     clear?.addEventListener('click', () => {
       input.value = '';
-      output.textContent = 'Results will appear here after scanning.';
+      output.textContent = mode === 'jwt-checker' ? 'Decoded JWT details will appear here.' : mode === 'url-cleaner' ? 'Cleaned URLs will appear here.' : 'Results will appear here after scanning.';
+      if (fileInput) fileInput.value = '';
+      if (urlReport) urlReport.textContent = 'Run the cleaner to see which parameter names were removed and which were preserved.';
       renderStats(stats, {});
     });
   }
@@ -285,11 +375,19 @@
   function initImageTool(root) {
     const input = root.querySelector('#image-file');
     const canvas = root.querySelector('#redaction-canvas');
+    const status = root.querySelector('[data-image-status]');
     if (!input || !canvas) return;
     const ctx = canvas.getContext('2d');
     let sourceImage = null;
+    let sourceUrl = '';
     let boxes = [];
     let start = null;
+
+    function setStatus(message, type) {
+      if (!status) return;
+      status.textContent = message;
+      status.className = `alert${type ? ` ${type}` : ''}`;
+    }
 
     function redraw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -298,8 +396,8 @@
       for (const box of boxes) {
         if (style === 'blur' && sourceImage) {
           ctx.save();
-          ctx.filter = 'blur(8px)';
-          ctx.drawImage(canvas, box.x, box.y, box.w, box.h, box.x, box.y, box.w, box.h);
+          ctx.filter = 'blur(12px)';
+          ctx.drawImage(sourceImage, box.x, box.y, box.w, box.h, box.x, box.y, box.w, box.h);
           ctx.restore();
           ctx.fillStyle = 'rgba(15, 38, 47, .18)';
           ctx.fillRect(box.x, box.y, box.w, box.h);
@@ -322,20 +420,34 @@
       const file = input.files && input.files[0];
       if (!file) return;
       const img = new Image();
+      if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+      sourceUrl = URL.createObjectURL(file);
       img.onload = () => {
-        const maxWidth = 1100;
-        const scale = Math.min(1, maxWidth / img.width);
-        canvas.width = Math.round(img.width * scale);
-        canvas.height = Math.round(img.height * scale);
+        const pixels = img.naturalWidth * img.naturalHeight;
+        if (pixels > 40 * 1000 * 1000) {
+          setStatus('This image exceeds 40 megapixels. Use a smaller copy to avoid browser memory problems.', 'danger');
+          URL.revokeObjectURL(sourceUrl);
+          sourceUrl = '';
+          sourceImage = null;
+          return;
+        }
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
         sourceImage = img;
         boxes = [];
         redraw();
-        URL.revokeObjectURL(img.src);
+        setStatus(`Ready. Export will preserve ${img.naturalWidth} × ${img.naturalHeight} pixels.`, 'ok');
+        if (sourceUrl) { URL.revokeObjectURL(sourceUrl); sourceUrl = ''; }
       };
-      img.src = URL.createObjectURL(file);
+      img.onerror = () => setStatus('The browser could not open this image.', 'danger');
+      img.src = sourceUrl;
     });
 
-    canvas.addEventListener('pointerdown', (event) => { if (sourceImage) start = getPoint(event); });
+    canvas.addEventListener('pointerdown', (event) => {
+      if (!sourceImage) return;
+      start = getPoint(event);
+      canvas.setPointerCapture?.(event.pointerId);
+    });
     canvas.addEventListener('pointerup', (event) => {
       if (!start || !sourceImage) return;
       const end = getPoint(event);
@@ -348,20 +460,37 @@
       if (box.w > 6 && box.h > 6) boxes.push(box);
       start = null;
       redraw();
+      setStatus(`${boxes.length} redaction box${boxes.length === 1 ? '' : 'es'} applied. Review the full image before downloading.`, 'ok');
     });
     root.querySelector('#redaction-style')?.addEventListener('change', redraw);
-    root.querySelector('[data-clear-boxes]')?.addEventListener('click', () => { boxes = []; redraw(); });
+    root.querySelector('[data-undo-box]')?.addEventListener('click', () => {
+      boxes.pop();
+      redraw();
+      setStatus(`${boxes.length} redaction box${boxes.length === 1 ? '' : 'es'} remaining.`);
+    });
+    root.querySelector('[data-clear-boxes]')?.addEventListener('click', () => {
+      boxes = [];
+      redraw();
+      setStatus('All redaction boxes cleared.');
+    });
     root.querySelector('[data-download-image]')?.addEventListener('click', () => {
-      if (!sourceImage) return;
+      if (!sourceImage) {
+        setStatus('Choose an image before downloading.', 'danger');
+        return;
+      }
       redraw();
       canvas.toBlob((blob) => {
-        if (!blob) return;
+        if (!blob) {
+          setStatus('The browser could not export the redacted image.', 'danger');
+          return;
+        }
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = 'privacy-toolbox-redacted.png';
         link.click();
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setStatus('Redacted PNG created. Open the downloaded file and inspect it at full size before sharing.', 'ok');
       }, 'image/png');
     });
   }

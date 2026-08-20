@@ -7,7 +7,7 @@ import CtaBand from '../components/CtaBand.astro';
 import { tools, getTool } from '../data/tools';
 import { getGuide } from '../data/guides';
 import { mainPages, getMainPage } from '../data/mainPages';
-import { breadcrumb, softwareSchema, faqSchema, organizationSchema, personSchema } from '../data/schema';
+import { breadcrumb, softwareSchema, organizationSchema, personSchema } from '../data/schema';
 
 export function getStaticPaths() {
   return [
@@ -21,17 +21,40 @@ const tool = type === 'tool' ? getTool(slug) : undefined;
 const page = type === 'main' ? getMainPage(slug) : undefined;
 if (!tool && !page) throw new Error(`Missing page: ${slug}`);
 
+const hubGuideSlugs: Record<string, string[]> = {
+  'ai-privacy-tools': [
+    'what-not-to-paste-into-chatgpt',
+    'how-to-anonymize-text-before-using-ai',
+    'client-data-redaction-examples',
+    'what-are-utm-parameters'
+  ],
+  'developer-privacy-tools': [
+    'sanitize-error-logs-before-sharing',
+    'redact-api-keys-before-posting-logs',
+    'check-jwt-for-sensitive-data',
+    'mask-json-before-sharing-with-support'
+  ],
+  'file-privacy-tools': [
+    'how-to-check-photo-gps',
+    'remove-exif-metadata-before-uploading',
+    'image-metadata-privacy-checklist',
+    'verify-download-sha256-checksum'
+  ]
+};
+
 const title = tool ? tool.seoTitle : page!.seoTitle;
 const description = tool ? tool.metaDescription : page!.metaDescription;
 const relatedTools = tool
   ? tools.filter((item) => tool.relatedTools.includes(item.slug))
   : tools.filter((item) => page?.relatedToolSlugs?.includes(item.slug)).slice(0, 8);
 const relatedGuides = tool ? tool.relatedGuides.map((guideSlug) => getGuide(guideSlug)).filter((guide) => guide !== undefined) : [];
+const hubGuides = !tool && page
+  ? (hubGuideSlugs[page.slug] || []).map((guideSlug) => getGuide(guideSlug)).filter((guide) => guide !== undefined)
+  : [];
 const usesFileWidget = tool && ['image-metadata-remover', 'image-metadata-viewer', 'sha256-checksum'].includes(tool.mode);
 const schema = tool
   ? [
       softwareSchema(tool),
-      faqSchema(tool.faq),
       breadcrumb([
         { name: 'Home', url: '/' },
         { name: 'Tools', url: '/tools/' },
@@ -152,6 +175,7 @@ const schema = tool
             <h2>Privacy reminder</h2>
             <p>The normal workflow runs locally in the browser, but local processing does not guarantee complete anonymization or safe sharing.</p>
             <a href="/browser-only-privacy/">What browser-only means</a>
+            <a href="https://github.com/ImranGul-dev/browserprivacy">Inspect the public source code</a>
           </div>
           {relatedGuides.length > 0 && (
             <div class="content-card">
@@ -200,6 +224,7 @@ const schema = tool
               <div>
                 <h2>Imran Gul</h2>
                 <p>Web developer and maintainer of Privacy Toolbox. Tool claims are intentionally limited to the implemented browser workflows and representative tests described on this site.</p>
+                <a href="https://github.com/ImranGul-dev/browserprivacy">View the public source code</a>
               </div>
             </section>
           )}
@@ -219,9 +244,29 @@ const schema = tool
             <a href="/methodology/">Testing methodology</a>
             <a href="/changelog/">Changelog</a>
             <a href="/disclaimer/">Limitations</a>
+            <a href="https://github.com/ImranGul-dev/browserprivacy">Public source code</a>
           </div>
         </aside>
       </section>
+
+      {hubGuides.length > 0 && (
+        <section class="section">
+          <div class="section-heading">
+            <div><span class="eyebrow">Learn the workflow</span><h2>Guides for this privacy topic</h2></div>
+            <p>Use the tool for the first pass, then follow the related guide for context, manual checks, and limitations.</p>
+          </div>
+          <div class="grid">
+            {hubGuides.map((guide) => (
+              <a class="guide-card" href={`/guides/${guide.slug}/`}>
+                <span class="tag">{guide.category}</span>
+                <h3>{guide.title}</h3>
+                <p>{guide.metaDescription}</p>
+                <div class="guide-meta"><span>{guide.readingTime}</span><span>Updated {guide.updated}</span></div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {relatedTools.length > 0 && (
         <section class="section">
