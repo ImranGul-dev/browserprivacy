@@ -59,7 +59,7 @@ const defaultJsonKeys = 'email,phone,name,address,token,secret,password,api_key,
     <div class="tool-grid">
       <div class="field">
         <label for="tool-input">JWT token</label>
-        <textarea id="tool-input" placeholder={tool.emptyState}></textarea>
+        <textarea id="tool-input" placeholder={tool.emptyState} autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
         <div class="tool-controls">
           <button class="btn" type="button" data-load-jwt-sample>Load safe sample</button>
           <button class="btn btn-primary" type="button" data-run-tool>{tool.primaryButton}</button>
@@ -77,7 +77,7 @@ const defaultJsonKeys = 'email,phone,name,address,token,secret,password,api_key,
     <div class="tool-grid">
       <div class="field">
         <label for="tool-input">URLs or text containing URLs</label>
-        <textarea id="tool-input" placeholder={tool.emptyState}></textarea>
+        <textarea id="tool-input" placeholder={tool.emptyState} autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
         <div class="field">
           <label for="url-clean-mode">Cleaning mode</label>
           <select id="url-clean-mode" data-url-clean-mode>
@@ -105,7 +105,7 @@ const defaultJsonKeys = 'email,phone,name,address,token,secret,password,api_key,
     <div class="tool-grid">
       <div class="field">
         <label for="tool-input">Input</label>
-        <textarea id="tool-input" placeholder={tool.emptyState}></textarea>
+        <textarea id="tool-input" placeholder={tool.emptyState} autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
         <div class="tool-controls">
           <input type="file" data-file-input accept=".txt,.csv,.json,.log,.env,text/plain,application/json,text/csv" aria-label="Choose a local text file" />
           <button class="btn" type="button" data-load-sample>Load sample</button>
@@ -126,7 +126,7 @@ const defaultJsonKeys = 'email,phone,name,address,token,secret,password,api_key,
           <div class="field">
             <label for="json-mask-keys">Sensitive JSON keys</label>
             <input id="json-mask-keys" type="text" data-mask-keys value={defaultJsonKeys} autocomplete="off" />
-            <p class="field-help">Comma-separated key names. Matching is recursive and also checks remaining string values for common sensitive patterns.</p>
+            <p class="field-help">Comma-separated key names. Matching uses whole key segments recursively, so user_name matches name while filename does not. Remaining string values are also scanned for common sensitive patterns.</p>
           </div>
         )}
 
@@ -143,6 +143,7 @@ const defaultJsonKeys = 'email,phone,name,address,token,secret,password,api_key,
         <label>Cleaned output</label>
         <div class="tool-output" data-output aria-live="polite">Results will appear here after scanning.</div>
         <div class="stats" data-stats></div>
+        {isJson && <div class="alert" data-json-status aria-live="polite">Valid JSON is parsed recursively. Invalid JSON falls back to text-only redaction and will be clearly flagged.</div>}
         <div class="alert">Automated detection is a first pass. Review context-specific identifiers before sharing the result.</div>
       </div>
     </div>
