@@ -7,7 +7,7 @@ import CtaBand from '../components/CtaBand.astro';
 import { tools, getTool } from '../data/tools';
 import { getGuide } from '../data/guides';
 import { mainPages, getMainPage } from '../data/mainPages';
-import { breadcrumb, softwareSchema, organizationSchema, personSchema } from '../data/schema';
+import { breadcrumb, softwareSchema, organizationSchema, personSchema, itemListSchema } from '../data/schema';
 
 export function getStaticPaths() {
   return [
@@ -59,12 +59,16 @@ const schema = tool
         { name: 'Home', url: '/' },
         { name: 'Tools', url: '/tools/' },
         { name: tool.name, url: `/${tool.slug}/` }
-      ])
+      ]),
+      ...(relatedTools.length ? [itemListSchema('Related privacy tools', relatedTools.map((item) => ({ name: item.name, url: `/${item.slug}/` })))] : []),
+      ...(relatedGuides.length ? [itemListSchema('Related privacy guides', relatedGuides.map((guide) => ({ name: guide.title, url: `/guides/${guide.slug}/` })))] : [])
     ]
   : [
       organizationSchema(),
       ...(page!.slug === 'about' || page!.slug === 'methodology' ? [personSchema()] : []),
-      breadcrumb([{ name: 'Home', url: '/' }, { name: page!.title, url: `/${page!.slug}/` }])
+      breadcrumb([{ name: 'Home', url: '/' }, { name: page!.title, url: `/${page!.slug}/` }]),
+      ...(relatedTools.length ? [itemListSchema('Related privacy tools', relatedTools.map((item) => ({ name: item.name, url: `/${item.slug}/` })))] : []),
+      ...(hubGuides.length ? [itemListSchema('Related privacy guides', hubGuides.map((guide) => ({ name: guide.title, url: `/guides/${guide.slug}/` })))] : [])
     ];
 ---
 <BaseLayout
