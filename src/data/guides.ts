@@ -1075,7 +1075,7 @@ export const guides: GuidePage[] = [
     relatedTools: [],
     relatedGuides: ['remove-pdf-pages-before-sharing', 'pdf-redaction-mistakes', 'remove-pdf-metadata-before-sharing'],
     published: '2026-06-20',
-    updated: '2026-09-16',
+    updated: '2026-09-15',
     readingTime: '6 min read'
   },
   {
@@ -1109,7 +1109,7 @@ export const guides: GuidePage[] = [
     relatedTools: ['url-privacy-cleaner'],
     relatedGuides: ['what-are-utm-parameters'],
     published: '2026-06-22',
-    updated: '2026-09-16',
+    updated: '2026-09-15',
     readingTime: '6 min read'
   },
   {
@@ -1143,7 +1143,7 @@ export const guides: GuidePage[] = [
     relatedTools: ['view-image-metadata', 'remove-exif-metadata'],
     relatedGuides: ['how-to-check-photo-gps', 'remove-exif-metadata-before-uploading', 'image-metadata-privacy-checklist'],
     published: '2026-06-21',
-    updated: '2026-09-16',
+    updated: '2026-09-15',
     readingTime: '6 min read'
   },
   {
@@ -1177,7 +1177,7 @@ export const guides: GuidePage[] = [
     relatedTools: ['view-image-metadata', 'remove-exif-metadata'],
     relatedGuides: ['how-to-check-photo-gps', 'remove-exif-metadata-before-uploading', 'image-metadata-privacy-checklist'],
     published: '2026-06-21',
-    updated: '2026-09-16',
+    updated: '2026-09-15',
     readingTime: '6 min read'
   },
   {
@@ -1211,7 +1211,7 @@ export const guides: GuidePage[] = [
     relatedTools: [],
     relatedGuides: ['remove-pdf-metadata-before-sharing', 'pdf-redaction-mistakes', 'no-upload-file-tools-explained'],
     published: '2026-06-23',
-    updated: '2026-09-16',
+    updated: '2026-09-15',
     readingTime: '7 min read'
   }
 ];
