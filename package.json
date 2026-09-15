@@ -13,7 +13,7 @@
     "check": "npm run check:scripts && npm run check:search-pages && npm run build && npm run check:redirects"
   },
   "dependencies": {
-    "astro": "7.0.6"
+    "astro": "7.3.2"
   },
   "engines": {
     "node": ">=22.0.0"
