@@ -29,10 +29,7 @@
 /guides/combine-pdfs-without-uploading/ /guides/merge-pdf-files-without-uploading/ 301!
 /guides/remove-blank-pages-from-pdf/ /guides/remove-pdf-pages-before-sharing/ 301!
 /guides/split-pdf-files-without-uploading/ /guides/remove-pdf-pages-before-sharing/ 301!
-/guides/remove-gps-from-iphone-photos/ /guides/remove-exif-metadata-before-uploading/ 301!
-/guides/remove-gps-from-android-photos/ /guides/remove-exif-metadata-before-uploading/ 301!
 /guides/is-it-safe-to-use-online-pdf-tools/ /guides/no-upload-file-tools-explained/ 301!
-/guides/remove-tracking-from-amazon-links/ /guides/what-are-utm-parameters/ 301!
 
 # Previous blog URLs
 /blog /guides/ 301!
@@ -68,8 +65,6 @@
 /tools/split-pdf/ /guides/remove-pdf-pages-before-sharing/ 301!
 
 # Legacy URLs reported by Google Search Console
-/guides/extract-one-page-from-pdf /guides/remove-pdf-pages-before-sharing/ 301!
-/guides/extract-one-page-from-pdf/ /guides/remove-pdf-pages-before-sharing/ 301!
 /guides/clean-links-before-sharing /guides/what-are-utm-parameters/ 301!
 /guides/clean-links-before-sharing/ /guides/what-are-utm-parameters/ 301!
 /guides/remove-pdf-pages-vs-redact-pdf /guides/remove-pdf-pages-before-sharing/ 301!
@@ -84,8 +79,8 @@
 /guides/image-metadata-viewer-before-sharing/ /guides/image-metadata-privacy-checklist/ 301!
 /blog/what-is-file-metadata /guides/image-metadata-privacy-checklist/ 301!
 /blog/what-is-file-metadata/ /guides/image-metadata-privacy-checklist/ 301!
-/blog/docx-comments-tracked-changes /file-privacy-tools/ 301!
-/blog/docx-comments-tracked-changes/ /file-privacy-tools/ 301!
+/blog/docx-comments-tracked-changes /guides/docx-comments-tracked-changes/ 301!
+/blog/docx-comments-tracked-changes/ /guides/docx-comments-tracked-changes/ 301!
 /blog/file-privacy-guide /file-privacy-tools/ 301!
 /blog/file-privacy-guide/ /file-privacy-tools/ 301!
 /tools/sha256-file-hash /sha256-checksum/ 301!

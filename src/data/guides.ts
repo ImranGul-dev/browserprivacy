@@ -1043,6 +1043,176 @@ export const guides: GuidePage[] = [
     published: '2026-06-22',
     updated: '2026-07-23',
     readingTime: '5 min read'
+  },
+  {
+    slug: 'extract-one-page-from-pdf',
+    title: 'How to Extract One Page From a PDF',
+    seoTitle: 'How to Extract One Page From a PDF Without Uploading It',
+    metaDescription: 'Extract and save one page from a PDF locally, verify the result, and avoid exposing the rest of the document to an online upload service.',
+    primaryKeyword: 'extract one page from PDF',
+    category: 'PDF Privacy',
+    intro: 'Sending a complete PDF when someone needs one page can expose unrelated names, account details, comments, attachments, or confidential pages.',
+    quickAnswer: 'Use a local PDF editor, your operating system print dialog, or a trusted browser-only tool to select the required page and save it as a new PDF. Open the new file and confirm that it contains only the intended page before sharing it.',
+    sections: [
+      {
+        heading: 'Choose the exact page you need',
+        paragraphs: ['Open the source PDF and confirm the visible page number and the printed page label. A document may label its cover or introduction differently from the number shown by the PDF viewer.', 'Write down the page content you expect to see so you can verify the extracted copy instead of relying only on its filename.']
+      },
+      {
+        heading: 'Extract the page locally',
+        paragraphs: ['In a desktop PDF application, use Extract, Organize Pages, or Print and select only the required page. On systems with a PDF printer, choose the single-page range and save the output as a new PDF.', 'Prefer a workflow that processes the file on your device when the document contains personal, financial, legal, medical, or business information.']
+      },
+      {
+        heading: 'Check the new PDF before sharing',
+        paragraphs: ['Close the original, open the newly created file, and count its pages. Confirm that the correct page is readable and that no neighboring pages were included.', 'Search the new PDF for names or phrases from unrelated sections. Also review document properties, comments, attachments, and form fields when the source is sensitive.']
+      },
+      {
+        heading: 'Know when extraction is not redaction',
+        paragraphs: ['Extracting one page limits which pages are shared, but it does not remove sensitive content visible on that page. Covering text with a shape or highlight may leave the underlying text recoverable.', 'Use a proper redaction workflow when part of the selected page must be permanently removed.']
+      }
+    ],
+    checklist: ['Correct source page identified', 'Only the required page selected', 'Output opened and page count checked', 'Metadata, comments, forms, and attachments reviewed', 'Sensitive page content properly redacted when necessary'],
+    relatedTools: [],
+    relatedGuides: ['remove-pdf-pages-before-sharing', 'pdf-redaction-mistakes', 'remove-pdf-metadata-before-sharing'],
+    published: '2026-06-20',
+    updated: '2026-09-16',
+    readingTime: '6 min read'
+  },
+  {
+    slug: 'remove-tracking-from-amazon-links',
+    title: 'How to Remove Tracking From Amazon Links',
+    seoTitle: 'How to Remove Tracking From Amazon Links Before Sharing',
+    metaDescription: 'Clean an Amazon product URL by keeping the product identifier and removing unnecessary referral, campaign, search, and tracking parameters.',
+    primaryKeyword: 'remove tracking from Amazon link',
+    category: 'Data Privacy',
+    intro: 'Amazon links copied from search results, apps, wish lists, and referral pages can contain long paths and parameters that are unnecessary for opening the product page.',
+    quickAnswer: 'For a normal Amazon product page, keep the Amazon domain and the product identifier in a clean path such as /dp/ASIN/. Remove unnecessary query parameters, then open the cleaned link in a private window to confirm it reaches the same product and variation.',
+    sections: [
+      {
+        heading: 'Find the product identifier',
+        paragraphs: ['Most standard product links include a ten-character ASIN after /dp/ or /gp/product/. That identifier usually points to the product while the surrounding product name, search position, referral fields, and campaign parameters are optional.', 'Do not guess or alter the identifier. Copy it exactly from the original product URL.']
+      },
+      {
+        heading: 'Build a shorter product link',
+        paragraphs: ['Use the same regional Amazon domain as the original link and a path such as https://www.amazon.com/dp/ASIN/. Regional domains matter because products, prices, availability, and accounts differ by marketplace.', 'Remove parameters such as ref, tag, linkCode, creative, keywords, pd_rd fields, and search-position data only when they are not intentionally required.']
+      },
+      {
+        heading: 'Test product and variation details',
+        paragraphs: ['Open the cleaned address in a private window. Confirm the product title, seller context, size, color, quantity, or selected variation still matches what you intended to share.', 'Some selection details may be encoded in query parameters. If removing a parameter changes the desired variation, restore only the value required for that selection.']
+      },
+      {
+        heading: 'Treat affiliate and invitation links carefully',
+        paragraphs: ['An affiliate tag may be intentionally included to credit a publisher. Removing it changes attribution, so be transparent when editing someone else’s affiliate link.', 'Wish-list, invitation, order, account, and signed links are not ordinary product URLs. They may expose private context or require parameters to function and should not be simplified using a product-link rule.']
+      }
+    ],
+    checklist: ['Correct regional Amazon domain retained', 'ASIN copied exactly', 'Unnecessary tracking fields removed', 'Product and variation verified privately', 'Affiliate or private link purpose considered'],
+    relatedTools: ['url-privacy-cleaner'],
+    relatedGuides: ['what-are-utm-parameters'],
+    published: '2026-06-22',
+    updated: '2026-09-16',
+    readingTime: '6 min read'
+  },
+  {
+    slug: 'remove-gps-from-android-photos',
+    title: 'How to Remove GPS Location From Android Photos',
+    seoTitle: 'How to Remove GPS Location From Photos on Android',
+    metaDescription: 'Remove saved GPS coordinates from Android photos, disable future camera location tags, and verify the cleaned copy before sharing.',
+    primaryKeyword: 'remove GPS from Android photos',
+    category: 'Image Privacy',
+    intro: 'A photo taken on Android may store latitude and longitude in EXIF metadata even when the image itself shows no obvious location.',
+    quickAnswer: 'Open the photo in your gallery or photo app, view its information or location panel, and use the available remove-location or edit-location option. Then create or download the cleaned copy and verify its metadata before sharing.',
+    sections: [
+      {
+        heading: 'Check whether the photo contains a location',
+        paragraphs: ['Open the image in Google Photos or the gallery supplied with your phone, then swipe up or open Details. A map, coordinates, or named place indicates that location information is associated with the photo.', 'Cloud photo services can also store an account-level estimated location that is separate from embedded EXIF data. Review both when available.']
+      },
+      {
+        heading: 'Remove the saved location',
+        paragraphs: ['Use Edit location, Remove location, or the equivalent option offered by your photo application. Menu names differ between Android versions and manufacturers.', 'If the application cannot remove embedded GPS fields, export a cleaned copy with a reputable local metadata remover and keep the original privately as a backup.']
+      },
+      {
+        heading: 'Stop adding GPS to future photos',
+        paragraphs: ['Open the Camera settings and turn off Save location, Location tags, or Geo-tagging. You can also deny precise location access to the camera in Android permissions.', 'Changing this setting affects future photos; it does not clean coordinates already stored in existing files.']
+      },
+      {
+        heading: 'Verify the file you will share',
+        paragraphs: ['Inspect the exported file rather than assuming the original was changed. Confirm that GPS latitude, longitude, altitude, and location fields are absent.', 'Metadata removal cannot hide visible clues such as street signs, landmarks, reflections, house numbers, school uniforms, or filenames. Review the pixels as well.']
+      }
+    ],
+    checklist: ['Photo details checked for map or coordinates', 'Location removed from the shareable copy', 'Camera location tagging disabled if desired', 'Exported file metadata verified', 'Visible location clues reviewed'],
+    relatedTools: ['view-image-metadata', 'remove-exif-metadata'],
+    relatedGuides: ['how-to-check-photo-gps', 'remove-exif-metadata-before-uploading', 'image-metadata-privacy-checklist'],
+    published: '2026-06-21',
+    updated: '2026-09-16',
+    readingTime: '6 min read'
+  },
+  {
+    slug: 'remove-gps-from-iphone-photos',
+    title: 'How to Remove GPS Location From iPhone Photos',
+    seoTitle: 'How to Remove GPS Location From Photos on iPhone',
+    metaDescription: 'Remove or exclude location metadata from iPhone photos, control future camera access, and verify the image before sharing it.',
+    primaryKeyword: 'remove GPS from iPhone photos',
+    category: 'Image Privacy',
+    intro: 'iPhone photos can include the location where they were taken, and that information may remain attached when the original file is shared.',
+    quickAnswer: 'In Photos, open the image, swipe up or tap the information button, choose Adjust beside the location, and select No Location. When using the share sheet, you can also open Options and turn off Location for that share.',
+    sections: [
+      {
+        heading: 'View the stored location',
+        paragraphs: ['Open the image in Photos and swipe upward or tap the information button. If a map or place appears, the photo has a location associated with it.', 'Check the exact photo you intend to send, especially when working with edited copies, downloads, or images saved from another application.']
+      },
+      {
+        heading: 'Remove location from the photo',
+        paragraphs: ['Tap Adjust beside the location and choose No Location. On supported iOS versions, this updates the location associated with the item in your Photos library.', 'Keep an original backup if the location is useful for your private archive, but share only the cleaned copy.']
+      },
+      {
+        heading: 'Exclude location while sharing',
+        paragraphs: ['From the share sheet, open Options near the top and turn off Location before selecting the recipient or app. This is useful when you want to retain private library data but exclude it from the shared item.', 'Repeat the check for each sharing session because share options and app behavior can change.']
+      },
+      {
+        heading: 'Control future camera location access',
+        paragraphs: ['In Settings, review Privacy & Security, Location Services, and Camera. Disabling location access prevents the Camera app from adding precise capture coordinates to future photos.', 'Removing GPS does not remove visible clues such as recognizable buildings, signs, faces, reflections, or screenshots containing addresses.']
+      }
+    ],
+    checklist: ['Information panel checked', 'No Location selected or sharing Location disabled', 'Shared copy inspected', 'Future Camera permission reviewed', 'Visible identifying clues reviewed'],
+    relatedTools: ['view-image-metadata', 'remove-exif-metadata'],
+    relatedGuides: ['how-to-check-photo-gps', 'remove-exif-metadata-before-uploading', 'image-metadata-privacy-checklist'],
+    published: '2026-06-21',
+    updated: '2026-09-16',
+    readingTime: '6 min read'
+  },
+  {
+    slug: 'docx-comments-tracked-changes',
+    title: 'How to Remove Comments and Tracked Changes From a DOCX File',
+    seoTitle: 'Remove DOCX Comments and Tracked Changes Before Sharing',
+    metaDescription: 'Inspect and remove Word comments, tracked changes, hidden revisions, document properties, and author information before sharing a DOCX file.',
+    primaryKeyword: 'remove DOCX comments and tracked changes',
+    category: 'File Privacy',
+    intro: 'A Word document can look finished while still containing reviewer comments, deleted text, author names, revision history, and document properties.',
+    quickAnswer: 'Work on a copy, accept or reject every tracked change, delete all comments, run Word’s Document Inspector, save the cleaned file under a new name, close it, reopen it, and inspect it again before sharing.',
+    sections: [
+      {
+        heading: 'Do not rely on hiding markup',
+        paragraphs: ['Choosing No Markup changes what Word displays but does not necessarily remove revisions. A recipient can switch the view and reveal insertions, deletions, formatting changes, and reviewer names.', 'Use the Review tab to accept or reject changes deliberately. Confirm that no unresolved revisions remain.']
+      },
+      {
+        heading: 'Delete comments and conversation threads',
+        paragraphs: ['Use the Review controls to move through comments and remove them. Resolve is not the same as delete; resolved threads may remain stored in the file.', 'Check headers, footers, text boxes, footnotes, and sections that may not be visible in the current view.']
+      },
+      {
+        heading: 'Run Document Inspector',
+        paragraphs: ['In desktop Word, use File, Info, Check for Issues, and Inspect Document. Review document properties, personal information, comments, revisions, hidden text, custom XML, and other available categories.', 'Save a separate cleaned copy before removing information so you retain an internal original when appropriate.']
+      },
+      {
+        heading: 'Reopen and verify the final DOCX',
+        paragraphs: ['Close Word, reopen the exact file you will send, and confirm Track Changes is off, the Reviewing Pane is empty, comments are gone, and document properties no longer expose unwanted names.', 'If the recipient only needs to read the document, a reviewed PDF may reduce editable-document risks, but the PDF must also be checked for metadata, annotations, attachments, and incorrect redaction.']
+      }
+    ],
+    checklist: ['All changes accepted or rejected', 'All comments deleted, not merely resolved', 'Document Inspector completed', 'Properties and author names reviewed', 'Final saved copy reopened and verified'],
+    relatedTools: [],
+    relatedGuides: ['remove-pdf-metadata-before-sharing', 'pdf-redaction-mistakes', 'no-upload-file-tools-explained'],
+    published: '2026-06-23',
+    updated: '2026-09-16',
+    readingTime: '7 min read'
   }
 ];
 
